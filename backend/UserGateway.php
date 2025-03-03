@@ -4,6 +4,9 @@ header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Headers: *");
 header("Access-Control-Allow-Methods: POST, OPTIONS");
 header("Access-Control-Allow-Credentials: true");  // Permette i cookie cross-origin
+header("Cache-Control: no-cache, must-revalidate");  // HTTP/1.1
+header("Pragma: no-cache");  // HTTP/1.0
+header("Expires: 0");
 
 class UserGateway extends Gateway
 {

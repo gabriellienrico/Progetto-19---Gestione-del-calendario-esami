@@ -1,9 +1,12 @@
 <?php
+session_start();
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Headers: *");
 header("Access-Control-Allow-Methods: GET, OPTIONS, PUT");
+header("Cache-Control: no-cache, must-revalidate");  // HTTP/1.1
+header("Pragma: no-cache");  // HTTP/1.0
+header("Expires: 0");
 
-session_start();
 
 class StorageGateway extends Gateway 
 {
