@@ -1,7 +1,11 @@
 <?php
 # http://my-server.com:8080/users/login
 
-session_start();
+ob_start();
+if(session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 header("Access-Control-Allow-Origin: http://localhost");
 header("Access-Control-Allow-Headers: *");
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS");

@@ -1,5 +1,9 @@
 <?php
-session_start();
+ob_start();
+if(session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 header("Access-Control-Allow-Origin: http://localhost");
 header("Access-Control-Allow-Headers: *");
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
@@ -21,12 +25,12 @@ class SessionGateway extends Gateway
                 // /users/login
             } else if ($_SERVER["REQUEST_METHOD"] === "GET") {
                 // Verifica se la variabile di sessione 'user' è settata
-                if ($_SESSION['user'] == null) { 
+                if (!isset($_SESSION['user'])) { 
                     echo json_encode([
                         'logged_in' => false,
                         'user' => "Not set"
                     ]);
-                } else if ($_SESSION["user"] != "Guest") {
+                } else {
                     // Se la sessione è attiva, restituisci un messaggio di successo
                     echo json_encode([
                         'logged_in' => true, 
@@ -59,10 +63,10 @@ class SessionGateway extends Gateway
                     if (!file_exists($file_path)) {
                         http_response_code(500);
                         echo json_encode(array(
-                            "success" => false,
-                            "error" => array(
-                                "code" => 500,
-                                "message" => "File not found"
+                            'success' => false,
+                            'error' => array(
+                                'code' => 500,
+                                'message' => "File not found"
                             )
                         ));
                         exit();
