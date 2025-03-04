@@ -1,0 +1,19 @@
+html, body, main {
+    margin: 0;
+    padding: 0;
+}
+
+.fc-col-header-cell-cushion {
+    /* color: black; */
+    text-decoration: none;
+}
+
+.fc-event-time, .fc-event-title {
+    font-size: var(--fc-small-font-size);
+    color: black;
+}
+
+.fc-daygrid-day-number {
+    color: black;
+    text-decoration: none;
+}

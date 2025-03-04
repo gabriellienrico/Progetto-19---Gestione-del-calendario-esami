@@ -30,7 +30,6 @@ export class UserView {
             selectable: true,
             selectMirror: true,
             unselectAuto: true,
-            editable: true,
             select: function (selectionInfo) {
                 alert(selectionInfo.startStr + ' to ' + selectionInfo.endStr);
             },
@@ -63,8 +62,18 @@ export class UserView {
                     start: '2025-03-05T09:00',
                     end: '2025-03-05T10:30',
                     color: 'green'
+                },
+                {
+                    title: 'Cultura e strumenti della comunicazione digitale',
+                    start: '2025-03-07T09:00',
+                    end: '2025-03-07T10:30',
+                    color: 'blue'
                 }
             ],
+            editable: true,
+            eventDrop: function(eventDropInfo) {
+
+            },
             dayCellDidMount: function (info) {
                 let cellDate = FullCalendar.formatDate(info.date, { month: 'numeric', day: '2-digit', year: 'numeric' });
                 let today = FullCalendar.formatDate(new Date(), { month: 'numeric', day: '2-digit', year: 'numeric' });
