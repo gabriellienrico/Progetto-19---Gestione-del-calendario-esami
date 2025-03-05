@@ -8,22 +8,62 @@ export class UserPresenter {
     }
 
     // Funzione per convertire la data da 'dd/MM/yyyy' a 'yyyy-MM-ddTHH:mm:ss'
-    convertDateFormat(dateStr) {
-        const parts = dateStr.split('/');  // Split '03/02/2025' in ['03', '02', '2025']
-        const formattedDate = `${parts[2]}-${parts[0]}-${parts[1]}T09:00:00`;  // '2025-02-03T00:00:00'
+    convertDateFormat(opz) {
+        const json = JSON.parse(opz)
+        //console.log(json.data)
+        //const parts = dateStr.split('/');  // Split '03/02/2025' in ['03', '02', '2025']
+        const formattedDate = `${json.data}T${json.orario_inizio}`;  // '2025-02-03T00:00:00'
+        //console.log(formattedDate)
         return formattedDate;
     }
 
     mapEvents(ev) {
         const mappedEvents = ev.map(event => {
-            const formattedDate = this.convertDateFormat(event.date_opt)
-            return {
-                title: event.course_name,
-                start: formattedDate,
-                course_year: event.course_year,
-                color: 'none'
+            const response = $.ajax({
+                url: 'http://localhost:8080/db/queryCorso',
+                method: 'POST',
+                data: {id: event.corso},
+                async: false,
+                success: function (response) {
+                    console.log(response);
+                    return response;
+                      // Verifica cosa ricevi dal server
+                    // if (response.success === true) {
+                    //     console.log(response.corso)
+                    //     const formattedDate = this.convertDateFormat(event.opz_1)
+                    //     return {
+                    //         title: response.corso.nome_corso,
+                    //         start: formattedDate,
+                    //         course_year: response.corso.anno_corso,
+                    //         borderColor: 'black'
+                    //     }
+                        
+                    // } else {
+                    //     console.error("La risposta non è nel formato corretto");
+                    // }
+                }.bind(this),
+                error: function (xhr, status, error) {
+                    console.error("Errore durante il recupero degli eventi:", error);
+                }
+            });
+            console.log(response);
+            if (response.responseJSON.success === true) {
+                console.log(response.responseJSON)
+                console.log(response.responseJSON.corso)
+                const formattedDate = this.convertDateFormat(event.opz_1)
+                return {
+                    title: response.responseJSON.corso[0].nome_corso,
+                    start: formattedDate,
+                    course_year: response.responseJSON.corso[0].anno_corso,
+                    borderColor: 'black',
+                }
+            } else {
+                console.error("La risposta non è nel formato corretto")
             }
+            //return app;
+            //console.log(event)
         })
+        console.log(mappedEvents)
         return mappedEvents
     }
 
@@ -35,11 +75,10 @@ export class UserPresenter {
             success: function (response) {
                 console.log(response);  // Verifica cosa ricevi dal server
                 if (response.success === true) {
-                    console.log(events)
+                    //console.log(events)
                     console.log(response.events)
-
                     events = this.mapEvents(response.events)
-                    console.log(events)
+                    //console.log(events)
                 } else {
                     console.error("La risposta non è nel formato corretto");
                 }
@@ -51,6 +90,7 @@ export class UserPresenter {
     }
 
     initializeCalendar() {
+
         this.getAppelli()
 
         const calendarEl = document.getElementById('calendar');
@@ -79,30 +119,9 @@ export class UserPresenter {
             },
             footerToolbar: {
                 //right: 'prev,next today',
-                left: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth'
+                left: 'dayGridMonth,timeGridWeek,listMonth'
             },
-            events: events
-            // [
-            //     {
-            //         title: 'Ingegneria del Software',
-            //         start: '2025-03-04T09:00',
-            //         end: '2025-03-04T10:30',
-            //         color: 'red'
-            //     },
-            //     {
-            //         title: 'Reti di Calcolatori',
-            //         start: '2025-03-05T09:00',
-            //         end: '2025-03-05T10:30',
-            //         color: 'green'
-            //     },
-            //     {
-            //         title: 'Cultura e strumenti della comunicazione digitale',
-            //         start: '2025-03-07T09:00',
-            //         end: '2025-03-07T10:30',
-            //         color: 'blue'
-            //     }
-            // ]
-            ,
+            events: events,
             editable: true,
             eventDrop: function (eventDropInfo) {
 
@@ -110,22 +129,40 @@ export class UserPresenter {
             dayCellDidMount: function (info) {
                 let cellDate = FullCalendar.formatDate(info.date, { month: 'numeric', day: '2-digit', year: 'numeric' });
                 let today = FullCalendar.formatDate(new Date(), { month: 'numeric', day: '2-digit', year: 'numeric' });
-                if (cellDate === today) {
-                    var cell = info.el;
-                    cell.style.background = 'none';
+                let cell = info.el;
+                if(info.view.type === "dayGridMonth") {
+                    if (cellDate === today) {
+                        cell.style.background = 'none'
+                        let back = cell.querySelector('.fc-daygrid-day-number')
+                        //console.log(back)
+                        back.style.backgroundColor = 'blue'
+                        back.style.color = 'white'
+                    }
+                    
                 }
             },
             eventDidMount: function (info) {
-                let eventDate = info.event.start;
-                let dot = info.el.querySelector('.fc-event-dot');
-                // Controlla se l'evento cade di lunedì (0 = domenica, 1 = lunedì, ..., 6 = sabato)
-                if (eventDate.getDay() === 1) { // Lunedì
-                    info.el.style.backgroundColor = 'blue';
-                } else if (eventDate.getDay() === 5) { // Venerdì
-                    info.el.style.backgroundColor = 'green';
-                    dot.style.display= 'none';
+                let eventDate = info.event.start
+                if(info.view.type === "dayGridMonth" || info.view.type === "timeGridWeek") {
+                    info.el.style.backgroundColor = 'lightgreen'
+                    info.event.setProp('borderColor', 'lightgreen')
                 } else {
-                    info.el.style.backgroundColor = 'red';
+                    info.event.setProp('borderColor', 'lightgreen')
+                }
+                
+                if(info.view.type === "dayGridMonth") {
+                    if(window.outerWidth < 768) {
+                        let time = info.el.querySelector('.fc-event-time')
+                        time.style.display = 'none'
+                    }
+                    if (eventDate.getDay() === 1) { // Lunedì
+                        //info.el.style.backgroundColor = 'blue';
+                    } else if (eventDate.getDay() === 3) { // Venerdì
+                        //info.el.style.backgroundColor = 'red';
+                        //dot.style.display= 'none';>
+                    } else {
+                        //info.el.style.backgroundColor = 'green';
+                    }
                 }
             }
         });

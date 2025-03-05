@@ -1,6 +1,6 @@
 <?php
 ob_start();
-if(session_status() === PHP_SESSION_NONE) {
+if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
@@ -17,103 +17,78 @@ require_once "database/DBConnectionFactory.php";
 class DatabaseGateway extends Gateway
 {
 
-    
-    public function handle_request($parts){
+
+    public function handle_request($parts)
+    {
         // echo $parts;
-        switch(count($parts)) {
-            
-        case 1: 
-            if ($_SERVER["REQUEST_METHOD"] === "OPTIONS") {
-                http_response_code(204);
-                exit();
-                // /users/login
-            } else if ($_SERVER["REQUEST_METHOD"] === "GET") {
-                // Verifica se la variabile di sessione 'user' è settata
-                if ($_SESSION['user'] == null) { 
-                    echo json_encode([
-                        'logged_in' => false,
-                        'user' => "Not set"
-                    ]);
-                } else if ($_SESSION["user"] != "Guest") {
-                    // Se la sessione è attiva, restituisci un messaggio di successo
-                    echo json_encode([
-                        'logged_in' => true, 
-                        'user' => $_SESSION['user']
-                    ]);
-                } 
-                // else {
-                //     // Se la sessione non è attiva, restituisci un messaggio di errore
-                //     echo json_encode([
-                //         'logged_in' => false,
-                //         'user' => "Guest"
-                //     ]);
-                // }
-            }
-            break;
+        switch (count($parts)) {
 
-        case 2: 
-            if($parts[1] == "queryAppelli") {
-                if ($_SERVER["REQUEST_METHOD"] === "OPTIONS") {
-                    http_response_code(204);
-                    exit();
-                    // /users/login
-                } else if ($_SERVER["REQUEST_METHOD"] === "POST") {
+            case 1:
+                http_response_code(400);
+                echo json_encode(array(
+                    "success" => false,
+                    "error" => array(
+                        "code" => 400,
+                        "message" => "Bad request"
+                    )
+                ));
+                break;
 
-                    $db = DBConnectionFactory::getFactory();
-                    $sql = "SELECT * FROM appelli";
+            case 2:
+                if ($parts[1] == "queryAppelli") {
+                    if ($_SERVER["REQUEST_METHOD"] === "OPTIONS") {
+                        http_response_code(204);
+                        exit();
+                        // /users/login
+                    } else if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
-                    $appelli = $db->fetchAll($sql);
-                    
-                    // $app_json = $appelli->fetch_assoc();
-                    // $app_json = $appelli->fetch_assoc();
-                    //$app_json[] = $appelli->toArray();
-                    // foreach($appelli as $appello) {
-                    //     $app_json[] = $appello->toArray();
-                    //     //$app_json .= json_encode($appello);
-                    //     //$app_json .= ",";
-                    // }  
-                    
-                    // foreach($appelli as $appello) {
-                    //     $app_json[] = $appello->toArray();
-                    //     //$app_json .= json_encode($appello);
-                    // }  
-                    
-                    // $content = json_encode( array(
-                    //     'success' => true,
-                    //     'appelli' => $app_json
-                    // ));
-                    //$content .= ",";
-                    
-                    // $events = array_map(function($appello) {
-                    //     $date = DateTime::createFromFormat('m/d/Y', $appello['date_opt']);
-                    //     $date->format('Y-m-d\TH:i:s');
-                    //     return [
-                    //         'id' => $appello['id'],
-                    //         'title' => $appello['course_name'],
-                    //         'start' => $date,
-                    //         'course_year' => $appello['course_year']
-                    //     ];
-                    // }, $appelli);
+                        $db = DBConnectionFactory::getFactory();
+                        $sql = "SELECT * FROM appelli";
 
-                    header("Content-Type: application/json");
-                    //echo json_encode($appelli);
-                    echo json_encode(array(
-                        'success' => true,
-                        'events' => $appelli
-                    ));
+                        $appelli = $db->fetchAll($sql);
+
+                        header("Content-Type: application/json");
+                        //echo json_encode($appelli);
+                        echo json_encode(array(
+                            'success' => true,
+                            'events' => $appelli
+                        ));
+                    }
                 }
-            } 
-            break;
-                
-        default: 
-            http_response_code(400);
-            echo json_encode(array(
-                "success" => false,
-                "error" => array(
-                    "code" => 400,
-                    "message" => "Bad request"
-                )
-            ));
+                else if ($parts[1] == "queryCorso") {
+                    if ($_SERVER["REQUEST_METHOD"] === "OPTIONS") {
+                        http_response_code(204);
+                        exit();
+                        // /users/login
+                    } else if ($_SERVER["REQUEST_METHOD"] === "POST") {
+
+                        $id = $_POST['id'];
+
+                        $db = DBConnectionFactory::getFactory();
+                        $sql = "SELECT * FROM corsi WHERE id = $id";
+
+                        $corso = $db->fetchAll($sql);
+
+                        header("Content-Type: application/json");
+                        //echo json_encode($appelli);
+                        echo json_encode(array(
+                            'success' => true,
+                            'corso' => $corso
+                        ));
+                    }
+                }
+                break;
+
+            default:
+                http_response_code(400);
+                echo json_encode(array(
+                    "success" => false,
+                    "error" => array(
+                        "code" => 400,
+                        "message" => "Bad request"
+                    )
+                ));
+                break;
         }
     }
 }

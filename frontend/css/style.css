@@ -6,6 +6,7 @@ html, body, main {
 .fc-col-header-cell-cushion {
     /* color: black; */
     text-decoration: none;
+    color: blue;
 }
 
 .fc-event-time, .fc-event-title {
@@ -16,4 +17,20 @@ html, body, main {
 .fc-daygrid-day-number {
     color: black;
     text-decoration: none;
+    border-radius: 1rem;
+    /* background-color: blue; */
+    width: 2rem;
+    margin: 0.25rem;
+    text-align: center;
+}
+
+
+.fc-daygrid-event-dot {
+    display: none;
+}
+
+.fc-event {
+    padding-left: 0.25em;
+    padding-right: 0.25em;
+    /* background-color: darksalmon; */
 }
