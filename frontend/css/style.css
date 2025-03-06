@@ -6,6 +6,7 @@ html, body, main {
 .fc-col-header-cell-cushion {
     /* color: black; */
     text-decoration: none;
+    color: blue;
 }
 
 .fc-event-time, .fc-event-title {
@@ -16,4 +17,64 @@ html, body, main {
 .fc-daygrid-day-number {
     color: black;
     text-decoration: none;
+    border-radius: 1rem;
+    /* background-color: blue; */
+    width: 2rem;
+    margin: 0.25rem;
+    text-align: center;
+}
+
+
+.fc-daygrid-event-dot {
+    display: none;
+}
+
+.fc-event {
+    padding-left: 0.25em;
+    padding-right: 0.25em;
+    /* background-color: darksalmon; */
+}
+
+
+.fc-button-primary {
+    padding: 0.4rem !important; 
+    background: darkblue !important;
+    border-color: darkblue !important;
+}
+
+.fc-optimize-button {
+    background: green !important;
+    border-color: green !important;
+    font-weight: bold !important;
+}
+
+#loading-indicator {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    padding: 20px;
+    border-radius: 5px;
+    font-size: 16px;
+    text-align: center;
+    z-index: 1000;
+}
+
+.spinner {
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-top: 4px solid white;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
