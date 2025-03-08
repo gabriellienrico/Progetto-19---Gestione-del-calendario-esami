@@ -8,11 +8,7 @@ export class UserPresenter {
 
     // Funzione per convertire la data da 'dd/MM/yyyy' a 'yyyy-MM-ddTHH:mm:ss'
     convertDateFormat(data, orario_inizio) {
-        //const json = JSON.parse(opz)
-        //console.log(json.data)
-        //const parts = dateStr.split('/');  // Split '03/02/2025' in ['03', '02', '2025']
         const formattedDate = `${data}T${orario_inizio}`;  // '2025-02-03T00:00:00'
-        //console.log(formattedDate)
         return formattedDate;
     }
 
@@ -36,26 +32,78 @@ export class UserPresenter {
             return;
     }
 
+    getProf(idProf) {
+        const response = $.ajax({
+            url: 'http://localhost:8080/db/queryProf',
+            method: 'POST',
+            data: { id: idProf },
+            async: false,
+            success: function (response) {
+                //console.log(response);
+                return response;
+            }.bind(this),
+            error: function (xhr, status, error) {
+                console.error("Errore durante il recupero degli eventi:", error);
+            }
+        });
+        if (response.responseJSON.success === true)
+            return response.responseJSON.prof[0];
+        else
+            return;
+    }
+
+    getAppelli() {
+        $.ajax({
+            url: 'http://localhost:8080/db/queryAppelli',
+            method: 'POST',
+            async: false,
+            success: function (response) {
+                console.log(response);  // Verifica cosa ricevi dal server
+                if (response.success === true) {
+                    //console.log(events)
+                    //console.log(response.events)
+                    events = this.mapEvents(response.events)
+                    //console.log(events.length)
+
+                    //this.optimizeCalendar()
+
+                    //console.log(events)
+                } else {
+                    console.error("La risposta non è nel formato corretto");
+                }
+            }.bind(this),
+            error: function (xhr, status, error) {
+                console.error("Errore durante il recupero degli eventi:", error);
+            }
+        });
+    }
+
     mapEvents(ev) {
         const mappedEvents = ev.map(event => {
             const corso = this.getCorso(event.corso)
+            const prof = this.getProf(event.professore)
             //console.log(response);
-            if (corso !== null) {
+            if (corso !== null && prof !== null) {
                 const opz_1 = JSON.parse(event.opz_1)
                 const orario_inizio1 = this.convertDateFormat(opz_1.data, opz_1.orario_inizio)
                 const orario_fine1 = this.convertDateFormat(opz_1.data, opz_1.orario_fine)
                 const opz_2 = JSON.parse(event.opz_2)
                 const orario_inizio2 = this.convertDateFormat(opz_2.data, opz_2.orario_inizio)
                 const orario_fine2 = this.convertDateFormat(opz_2.data, opz_2.orario_fine)
+                const opz_agg = JSON.parse(event.opz_agg)
                 //const formattedDate2 = this.convertDateFormat(event.opz_2)
                 return {
                     title: corso.nome_corso,
                     start: orario_inizio1,
                     end: orario_fine1,
                     course_year: corso.anno_corso,
+                    prof: prof.nome + " " + prof.cognome,
+                    email: prof.email,
+                    appello_id: event.id,
                     start_2: orario_inizio2,
                     end_2: orario_fine2,
-                    borderColor: 'black',
+                    opz_agg: opz_agg,
+                    borderColor: 'black'
                 }
             } else {
                 console.error("La risposta non è nel formato corretto")
@@ -66,89 +114,79 @@ export class UserPresenter {
         return mappedEvents
     }
 
-    // optimizeCalendar() {
-    //     function areOverlapping(event1, event2) {
-    //         return event1.start < event2.end && event1.end > event2.start;
-    //     }
+    setColor(info) {
+        let events = info.view.calendar.getEvents()
 
-    //     function getConflictWeight(event1, event2) {
-    //         return event1.course_year === event2.course_year ? 2 : 1;
-    //     }
+        //Estrazione della data
+        let eventDate = info.event.startStr.split('T')[0]
 
-    //     function countConflicts(event, events) {
-    //         return events.reduce((count, other) => {
-    //             return count + (event !== other && areOverlapping(event, other) ? getConflictWeight(event, other) : 0);
-    //         }, 0);
-    //     }
+        //Ricerca eventi nello stesso giorno
+        let sameDayEvents = events.filter(event => event.startStr.split('T')[0] === eventDate)
 
-    //     function chooseBestDate(event, events) {
-    //         let currentConflicts = countConflicts(event, events);
+        //Ricerca eventi nello stesso giorno con anni di corso diversi
+        let diffCourseEvents = events.filter(event => event.extendedProps.course_year !== info.event.extendedProps.course_year)
 
-    //         // Prova la data alternativa
-    //         [event.start, event.start_2] = [event.start_2, event.start];
-    //         [event.end, event.end_2] = [event.end_2, event.end];
+        //Ricerca eventi nello stesso giorno con stesso anno di corso
+        let sameCourseEvents = sameDayEvents.filter(event => event.extendedProps.course_year === info.event.extendedProps.course_year);
+        //console.log(info.event.startStr)
 
-    //         let alternativeConflicts = countConflicts(event, events);
+        if (info.view.type === "dayGridMonth" || info.view.type === "timeGridWeek") {
+            if (sameCourseEvents.length > 1) {
+                info.el.style.backgroundColor = 'red'
+                //info.event.setProp('color', 'red')
+                info.event.setProp('borderColor', 'firebrick')
+            } else if (diffCourseEvents.length > 1) {
+                let hasConflict = false;
 
-    //         // Se l'alternativa è peggiore, torna alla data originale
-    //         if (alternativeConflicts >= currentConflicts) {
-    //             [event.start, event.start_2] = [event.start_2, event.start];
-    //             [event.end, event.end_2] = [event.end_2, event.end];
-    //         }
-    //     }
+                //Confronta ogni evento di corso diverso con l'evento attuale
+                diffCourseEvents.forEach(event => {
+                    let infoStart = new Date(info.event.startStr);
+                    let infoEnd = new Date(info.event.endStr);
+                    let eventStart = new Date(event.startStr);
+                    let eventEnd = new Date(event.endStr);
 
-    //     let previousComparisons = new Set();
-    //     let conflicts;
-    //     let iteration = 0;
+                    //Conflitto orario
+                    if ((infoEnd > eventStart && infoStart < eventEnd) ||
+                        (eventEnd > infoStart && eventStart < infoEnd)) {
+                        hasConflict = true;
+                    }
+                })
 
-    //     function getComparisonKey(event1, event2) {
-    //         return [event1.title, event1.start, event1.end, event2.title, event2.start, event2.end].join('|');
-    //     }
+                if (hasConflict) {
+                    info.el.style.backgroundColor = 'rgb(255, 255, 153)'
+                    info.event.setProp('borderColor', 'khaki')
+                } else {
+                    info.el.style.backgroundColor = 'lightgreen'
+                    info.event.setProp('borderColor', 'limegreen')
+                }
 
+            } else {
+                info.el.style.backgroundColor = 'lightgreen'
+                info.event.setProp('borderColor', 'limegreen')
+            }
+        } else {
+            if (sameCourseEvents.length > 1) {
+                //info.el.style.backgroundColor = 'red'
+                info.event.setProp('borderColor', 'red')
+            } else if (sameDayEvents.length > 1) {
+                //info.el.style.backgroundColor = 'yellow'
+                info.event.setProp('borderColor', 'yellow')
+            } else {
+                //info.el.style.backgroundColor = 'lightgreen'
+                info.event.setProp('borderColor', 'lightgreen')
+            }
+        }
 
-    //     do {
-    //         conflicts = [];
-    //         iteration++;
-    //         console.log(iteration)
-    //         //previousComparisons.clear();
+        if (info.view.type === "dayGridMonth") {
+            if (window.outerWidth < 768) {
+                let time = info.el.querySelector('.fc-event-time')
+                time.style.display = 'none'
+                //info.event.setProp('displayEventTime', false)
+            }
+        }
+    }
 
-    //         for (let i = 0; i < events.length; i++) {
-    //             for (let j = i + 1; j < events.length; j++) {
-    //                 if (areOverlapping(events[i], events[j])) {
-    //                     let key = getComparisonKey(events[i], events[j]);
-    //                     console.log(key)
-    //                     if (previousComparisons.has(key)) {
-    //                         console.log("stallo rilevato: " + key)
-    //                         break; // Stallo rilevato, esco dal loop
-    //                     }
-    //                     previousComparisons.add(key);
-
-
-    //                     conflicts.push({
-    //                         event1: events[i],
-    //                         event2: events[j],
-    //                         weight: getConflictWeight(events[i], events[j])
-    //                     });
-    //                 }
-    //             }
-    //         }
-    //         console.log("fuori dal for")
-
-    //         while (conflicts.length > 0) {
-    //             conflicts.sort((a, b) => a.weight - b.weight);
-    //             chooseBestDate(conflicts[conflicts.length-1].event2, events);
-    //             console.log(conflicts[conflicts.length-1].event1, conflicts[conflicts.length-1].event2)
-    //             conflicts.pop()
-    //         }
-
-    //     } while (iteration < 100);
-
-    //     console.loge(countConflicts())
-
-    //     return events;
-    // }
-
-    optimizeCalendar() {
+    optimizeCalendar(option) {
 
         document.getElementById("loading-indicator").style.display = "block";
 
@@ -253,9 +291,11 @@ export class UserPresenter {
         function dijkstraOptimization(initialState) {
             let queue = [{ state: initialState, weight: calculateTotalWeight(initialState) }];
             let visited = new Set();
-            let bestState = initialState;
-            let bestWeight = calculateTotalWeight(initialState);
-            console.log(bestWeight)
+            //let bestState = initialState;
+            //let bestWeight = calculateTotalWeight(initialState);
+            let bestStates = []
+            let bestWeights = []
+            //console.log(bestWeight)
 
             let iteration = 0
 
@@ -267,20 +307,41 @@ export class UserPresenter {
 
                 let { state, weight } = queue.shift(); // Estrai il primo stato dalla coda
 
-                let stateKey = JSON.stringify(state.map(e => ({ title: e.title, start: e.start, end: e.end })));
-                if (visited.has(stateKey)) continue; // Salta se già visitato
+                let stateKey = `${state.map(e => e.title).join('-')}-${state.map(e => e.start).join('-')}`
+                if (visited.has(stateKey))
+                    continue; // Salta se già visitato
                 visited.add(stateKey);
 
-                if (weight < bestWeight) {
-                    bestWeight = weight;
-                    bestState = state;
+                // if (weight < bestWeight) {
+                //     bestWeight = weight;
+                //     bestState = state;
+                // }
+
+                //Tiene traccia dei migliori stati
+                if (bestStates.length < 2) {
+                    bestStates.push(state)
+                    bestWeights.push(weight)
+                } else {
+                    //Se si trova un miglior stato (minor peso), si sostituisce la seconda migliore ottimizzazione
+                    if (weight < bestWeights[1]) {
+                        if (weight < bestWeights[0]) {
+                            bestStates[1] = bestStates[0]
+                            bestWeights[1] = bestWeights[0]
+                            bestStates[0] = state
+                            bestWeights[0] = weight
+                        } else {
+                            bestStates[1] = state
+                            bestWeights[1] = weight
+                        }
+
+                    }
                 }
 
                 // Genera i vicini dello stato corrente
                 let neighbors = generateNeighbors(state);
                 for (let neighbor of neighbors) {
                     let neighborWeight = calculateTotalWeight(neighbor);
-                    let neighborKey = JSON.stringify(neighbor.map(e => ({ title: e.title, start: e.start, end: e.end })));
+                    let neighborKey = `${neighbor.map(e => e.title).join('-')}-${neighbor.map(e => e.start).join('-')}`
 
                     // Aggiungi il vicino alla coda se non è già stato visitato
                     if (!visited.has(neighborKey)) {
@@ -288,39 +349,52 @@ export class UserPresenter {
                     }
                 }
                 iteration++;
-                //console.log("dijkstra optimization: "+iteration)
+                console.log("dijkstra optimization: "+iteration)
             }
-            console.log(bestWeight)
-            return bestState;
+            console.log(bestWeights[option - 1])
+            if (option === 1)
+                return bestStates[0]
+            return bestStates[1]
         }
 
         return dijkstraOptimization(events);
     }
 
-    getAppelli() {
-        $.ajax({
-            url: 'http://localhost:8080/db/queryAppelli',
-            method: 'POST',
-            async: false,
-            success: function (response) {
-                console.log(response);  // Verifica cosa ricevi dal server
-                if (response.success === true) {
-                    //console.log(events)
-                    //console.log(response.events)
-                    events = this.mapEvents(response.events)
-                    //console.log(events.length)
+    updateEvents(date) {
+        let events = window.calendar.getEvents().filter(event => {
+            return event.start.toISOString().split('T')[0] === date.toISOString().split('T')[0]
+        })
 
-                    //this.optimizeCalendar()
-
-                    //console.log(events)
-                } else {
-                    console.error("La risposta non è nel formato corretto");
-                }
-            }.bind(this),
-            error: function (xhr, status, error) {
-                console.error("Errore durante il recupero degli eventi:", error);
+        events.forEach(event => {
+            let newProps = {
+                title: event.title,
+                start: event.start,
+                end: event.end,
+                extendedProps: { ...event.extendedProps },
+                borderColor: 'black'
             }
-        });
+            event.remove()
+            window.calendar.addEvent(newProps, true)
+        })
+    }
+
+    applyOptimizedEvents(option) {
+        document.getElementById("loading-indicator").style.display = "block";
+
+        //Permette all'interfaccia grafica di visualizzare il loading indicator
+        setTimeout(() => {
+
+            //Rimuove gli eventi precedenti
+            let removeEvents = window.calendar.getEventSources()
+            removeEvents.forEach(event => {
+                event.remove()
+            })
+
+            //Ottimizza gli eventi quando il bottone viene clickato
+            window.calendar.addEventSource(this.optimizeCalendar(option))
+
+            document.getElementById("loading-indicator").style.display = "none"
+        }, 200)
     }
 
     initializeCalendar() {
@@ -328,7 +402,7 @@ export class UserPresenter {
         this.getAppelli()
 
         const calendarEl = document.getElementById('calendar');
-        var calendar = new window.FullCalendar.Calendar(calendarEl, {
+        window.calendar = new window.FullCalendar.Calendar(calendarEl, {
             height: window.outerWidth < 768 ? 'auto' : '90vh',
             stickyHeaderDates: true,
             themeSystem: 'bootstrap5',
@@ -344,28 +418,26 @@ export class UserPresenter {
             locale: 'it',
             customButtons: {
                 optimize: {
-                    text: 'Ottimizza!',
+                    text: 'Opzione 1',
                     click: function () {
-                        //console.log(document.getElementById("loading-indicator").style.display)
-                        document.getElementById("loading-indicator").style.display = "block";
-                        //console.log(document.getElementById("loading-indicator").style.display);
 
-                        setTimeout(() => {
-                            //console.log(document.getElementById("loading-indicator").style.display)
-
-                            //Rimuove gli eventi precedenti
-                            let removeEvents = calendar.getEventSources()
-                            removeEvents.forEach(event => {
-                                event.remove()
-                            })
-
-                            //Ottimizza gli eventi quando il bottone viene clickato
-                            calendar.addEventSource(this.optimizeCalendar())
-
-                            document.getElementById("loading-indicator").style.display = "none"
-                        }, 0)
+                        this.applyOptimizedEvents(1)
 
                     }.bind(this)
+                },
+                optimize_2: {
+                    text: 'Opzione 2',
+                    click: function () {
+
+                        this.applyOptimizedEvents(2)
+
+                    }.bind(this)
+                },
+                optimize_3: {
+                    text: 'Opzione 3'
+                },
+                applica: {
+                    text: 'Applica modifiche'
                 }
             },
             eventTimeFormat: { // like '14:30:00'
@@ -381,20 +453,22 @@ export class UserPresenter {
             footerToolbar: {
                 //right: 'prev,next today',
                 left: 'dayGridMonth,timeGridWeek,listMonth',
-                right: 'optimize'
+                center: 'applica',
+                right: 'optimize,optimize_2'
             },
             events: events,
             editable: true,
-            // loading: function(isLoading, view) {
-            //     if(isLoading) {
-            //         $('#loading-indicator').show()
-            //     } else {
-            //         $('#loading-indicator').hide()
-            //     }
-            // },
-            eventDrop: function (eventDropInfo) {
+            eventClick: function (info) {
+                this.view.showInfo(info.event)
+            }.bind(this),
+            eventDrop: function (info) {
+                let oldDate = info.oldEvent.start;
+                let newDate = info.event.start
 
-            },
+                this.updateEvents(oldDate)
+                this.updateEvents(newDate)
+
+            }.bind(this),
             dayCellDidMount: function (info) {
                 let cellDate = FullCalendar.formatDate(info.date, { month: 'numeric', day: '2-digit', year: 'numeric' });
                 let today = FullCalendar.formatDate(new Date(), { month: 'numeric', day: '2-digit', year: 'numeric' });
@@ -411,64 +485,10 @@ export class UserPresenter {
                 }
             },
             eventDidMount: function (info) {
-
-                let events = info.view.calendar.getEvents()
-
-                //Estrazione della data
-                let eventDate = info.event.startStr.split('T')[0]
-
-                //Ricerca eventi nello stesso giorno
-                let sameDayEvents = events.filter(event => event.startStr.split('T')[0] === eventDate)
-
-                //Ricerca eventi con stesso anno di corso nello stesso giorno
-                let sameCourseEvents = sameDayEvents.filter(event => event.extendedProps.course_year === info.event.extendedProps.course_year);
-                //console.log(info.event.startStr)
-
-                if (info.view.type === "dayGridMonth" || info.view.type === "timeGridWeek") {
-                    if(sameCourseEvents.length > 1) {
-                        info.el.style.backgroundColor = 'red'
-                        info.event.setProp('borderColor', 'firebrick')
-                    } else if (sameDayEvents.length > 1) {
-                        info.el.style.backgroundColor = 'rgb(255, 255, 153)'
-                        info.event.setProp('borderColor', 'khaki')
-                    } else {
-                        info.el.style.backgroundColor = 'lightgreen'
-                        info.event.setProp('borderColor', 'limegreen')
-                    }
-                } else {
-                    if(sameCourseEvents.length > 1) {
-                        //info.el.style.backgroundColor = 'red'
-                        info.event.setProp('borderColor', 'red')
-                    } else if (sameDayEvents.length > 1) {
-                        //info.el.style.backgroundColor = 'yellow'
-                        info.event.setProp('borderColor', 'yellow')
-                    } else {
-                        //info.el.style.backgroundColor = 'lightgreen'
-                        info.event.setProp('borderColor', 'lightgreen')
-                    }
-                }
-
-                if (info.view.type === "dayGridMonth") {
-                    if (window.outerWidth < 768) {
-                        let time = info.el.querySelector('.fc-event-time')
-                        time.style.display = 'none'
-                        //info.event.setProp('displayEventTime', false)
-                    }
-
-                    
-
-                    // if (eventDate.getDay() === 1) { // Lunedì
-                    //     //info.el.style.backgroundColor = 'blue';
-                    // } else if (eventDate.getDay() === 3) { // Venerdì
-                    //     //info.el.style.backgroundColor = 'red';
-                    //     //dot.style.display= 'none';>
-                    // } else {
-                    //     //info.el.style.backgroundColor = 'green';
-                    // }
-                }
-            }
+                this.setColor(info)
+            }.bind(this)
         });
-        calendar.render();
+        window.calendar.render();
     }
 
     checkSession() {
@@ -483,6 +503,7 @@ export class UserPresenter {
                 console.log(response);
                 if (response.logged_in) {
                     this.view.showCalendar()
+
                     //this.getAppelli()
                     this.initializeCalendar()
                     console.log(events)
@@ -546,4 +567,5 @@ export class UserPresenter {
             }
         });
     }
+
 }

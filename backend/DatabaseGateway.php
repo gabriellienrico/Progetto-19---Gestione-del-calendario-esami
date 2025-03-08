@@ -77,6 +77,28 @@ class DatabaseGateway extends Gateway
                         ));
                     }
                 }
+                else if ($parts[1] == "queryProf") {
+                    if ($_SERVER["REQUEST_METHOD"] === "OPTIONS") {
+                        http_response_code(204);
+                        exit();
+                        // /users/login
+                    } else if ($_SERVER["REQUEST_METHOD"] === "POST") {
+
+                        $id = $_POST['id'];
+
+                        $db = DBConnectionFactory::getFactory();
+                        $sql = "SELECT * FROM professori WHERE id = $id";
+
+                        $prof = $db->fetchAll($sql);
+
+                        header("Content-Type: application/json");
+                        //echo json_encode($appelli);
+                        echo json_encode(array(
+                            'success' => true,
+                            'prof' => $prof
+                        ));
+                    }
+                }
                 break;
 
             default:

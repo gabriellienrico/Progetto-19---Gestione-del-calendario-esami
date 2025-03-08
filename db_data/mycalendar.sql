@@ -91,6 +91,7 @@ INSERT INTO appelli (corso, professore, opz_1, opz_2, opz_agg) VALUES
     '{"data": "2025-01-14", "orario_inizio": "08:30", "orario_fine": "12:30"}',
     '{"agg": "false", "info": ""}'
 ),
+
 (
     2, -- Analisi Matematica
     2, -- Alessandro Zaccagnini
@@ -98,6 +99,7 @@ INSERT INTO appelli (corso, professore, opz_1, opz_2, opz_agg) VALUES
     '{"data": "2025-01-14", "orario_inizio": "13:30", "orario_fine": "15:30"}',
     '{"agg": "false", "info": ""}'
 ),
+
 (
     3, -- Architettura degli Elaboratori
     3, -- Giuseppe Cota
@@ -105,13 +107,15 @@ INSERT INTO appelli (corso, professore, opz_1, opz_2, opz_agg) VALUES
     '{"data": "2025-01-08", "orario_inizio": "10:00", "orario_fine": "12:00"}',
     '{"agg": "false", "info": ""}'
 ),
+
 (
     4, -- Algebra e Geometria
     5, -- Anna Benini
-    '{"data": "2025-01-14", "orario_inizio": "14:00", "orario_fine": "16:00"}',
-    '{"data": "2025-01-13", "orario_inizio": "14:00", "orario_fine": "16:00"}',
+    '{"data": "2025-01-16", "orario_inizio": "10:30", "orario_fine": "12:30"}',
+    '{"data": "2025-01-14", "orario_inizio": "10:30", "orario_fine": "12:30"}',
     '{"agg": "false", "info": ""}'
 ),
+
 (
     5, -- Algoritmi e Strutture Dati
     16, -- Vincenzo Bonnici
@@ -119,6 +123,7 @@ INSERT INTO appelli (corso, professore, opz_1, opz_2, opz_agg) VALUES
     '{"data": "2025-01-13", "orario_inizio": "10:00", "orario_fine": "12:00"}',
     '{"agg": "false", "info": ""}'
 ),
+
 (
     6, -- Fisica
     7, -- Roberto De Pietri
@@ -126,6 +131,7 @@ INSERT INTO appelli (corso, professore, opz_1, opz_2, opz_agg) VALUES
     '{"data": "2025-01-20", "orario_inizio": "09:00", "orario_fine": "11:00"}',
     '{"agg": "false", "info": ""}'
 ),
+
 (
     7, -- Elementi di Probabilità
     8, -- Francesco Morandin
@@ -133,6 +139,7 @@ INSERT INTO appelli (corso, professore, opz_1, opz_2, opz_agg) VALUES
     '{"data": "2025-01-17", "orario_inizio": "09:30", "orario_fine": "11:30"}',
     '{"agg": "false", "info": ""}'
 ),
+
 (
     8, -- Basi di Dati
     9, -- Enea Zaffanella
@@ -140,6 +147,7 @@ INSERT INTO appelli (corso, professore, opz_1, opz_2, opz_agg) VALUES
     '{"data": "2025-01-10", "orario_inizio": "10:30", "orario_fine": "12:30"}',
     '{"agg": "true", "info": "Gli studenti che prenderanno un voto >25 alla prova scritta dovranno sostenere una prova orale in data che verrà comunicata dal docente."}'
 ),
+
 (
     9, -- Sistemi Informativi
     10, -- Giulio Destri
@@ -147,6 +155,7 @@ INSERT INTO appelli (corso, professore, opz_1, opz_2, opz_agg) VALUES
     '{"data": "2025-01-06", "orario_inizio": "09:00", "orario_fine": "10:30"}',
     '{"agg": "false", "info": ""}'
 ),
+
 (
     10, -- Sistemi Operativi
     11, -- Flavio Bertini
@@ -154,6 +163,7 @@ INSERT INTO appelli (corso, professore, opz_1, opz_2, opz_agg) VALUES
     '{"data": "2025-01-20", "orario_inizio": "09:00", "orario_fine": "10:30"}',
     '{"agg": "false", "info": ""}'
 ),
+
 (
     11, -- Calcolo Numerico
     12, -- Chiara Guardasoni
@@ -161,6 +171,7 @@ INSERT INTO appelli (corso, professore, opz_1, opz_2, opz_agg) VALUES
     '{"data": "2025-01-23", "orario_inizio": "10:30", "orario_fine": "12:30"}',
     '{"agg": "false", "info": ""}'
 ),
+
 (
     12, -- Fondamenti dell'Informatica
     13, -- Roberto Bagnara
@@ -168,6 +179,7 @@ INSERT INTO appelli (corso, professore, opz_1, opz_2, opz_agg) VALUES
     '{"data": "2025-01-13", "orario_inizio": "08:30", "orario_fine": "10:30"}',
     '{"agg": "false", "info": ""}'
 ),
+
 (
     13, -- Laboratorio di Algoritmi e Strutture Dati
     4, -- Alessandro Dal Palù
@@ -175,6 +187,7 @@ INSERT INTO appelli (corso, professore, opz_1, opz_2, opz_agg) VALUES
     '{"data": "2025-01-10", "orario_inizio": "10:00", "orario_fine": "14:00"}',
     '{"agg": "false", "info": ""}'
 ),
+
 (
     14, -- Metodologie di Programmazione
     9, -- Enea Zaffanella
@@ -182,6 +195,7 @@ INSERT INTO appelli (corso, professore, opz_1, opz_2, opz_agg) VALUES
     '{"data": "2025-01-07", "orario_inizio": "08:30", "orario_fine": "10:30"}',
     '{"agg": "true", "info": "Gli studenti che prenderanno un voto >25 alla prova scritta dovranno sostenere una prova orale in data che verrà comunicata dal docente."}'
 ),
+
 (
     15, -- Ingegneria del Software
     16, -- Vincenzo Bonnici
@@ -189,6 +203,7 @@ INSERT INTO appelli (corso, professore, opz_1, opz_2, opz_agg) VALUES
     '{"data": "2025-01-06", "orario_inizio": "09:00", "orario_fine": "11:00"}',
     '{"agg": "true", "info": "Gli studenti che passeranno lo scritto dovranno sottoporsi a un orale, che consiste nella presentazione di un progetto, in data da concordare con il docente."}'
 ),
+
 (
     16, -- Reti di Calcolatori
     14, -- Roberto Alfieri
@@ -196,6 +211,7 @@ INSERT INTO appelli (corso, professore, opz_1, opz_2, opz_agg) VALUES
     '{"data": "2025-01-09", "orario_inizio": "10:30", "orario_fine": "12:30"}',
     '{"agg": "true", "info": "In caso di passaggio della prova scritta, è prevista una prova orale indicativamente una settimana dopo la prova scritta."}'
 ),
+
 (
     17, -- Sistemi Informativi e Gestione d'Impresa
     15, -- Armando Sternieri
@@ -203,6 +219,7 @@ INSERT INTO appelli (corso, professore, opz_1, opz_2, opz_agg) VALUES
     '{"data": "2025-01-16", "orario_inizio": "15:00", "orario_fine": "17:00"}',
     '{"agg": "false", "info": ""}'
 ),
+
 (
     18, -- Intelligenza Artificiale
     6, -- Federico Bergenti
@@ -210,13 +227,205 @@ INSERT INTO appelli (corso, professore, opz_1, opz_2, opz_agg) VALUES
     '{"data": "2025-01-09", "orario_inizio": "09:00", "orario_fine": "11:00"}',
     '{"agg": "true", "info": "La prova orale può essere richiesta a discrezione del docente."}'
 ),
+
 (
     19, -- Programmazione Parallela e HPC
     14, -- Roberto Alfieri
     '{"data": "2025-01-23", "orario_inizio": "09:00", "orario_fine": "18:00"}',
     '{"data": "2025-01-20", "orario_inizio": "09:00", "orario_fine": "18:00"}',
     '{"agg": "false", "info": ""}'
+),
+
+
+(
+    1, -- Fondamenti di Programmazione
+    1, -- Gianfranco Rossi
+    '{"data": "2025-01-17", "orario_inizio": "08:30", "orario_fine": "12:30"}',
+    '{"data": "2025-01-21", "orario_inizio": "08:30", "orario_fine": "12:30"}',
+    '{"agg": "false", "info": ""}'
+),
+-- (
+--     1, -- Fondamenti di Programmazione
+--     1, -- Gianfranco Rossi
+--     '{"data": "2025-01-24", "orario_inizio": "08:30", "orario_fine": "12:30"}',
+--     '{"data": "2025-01-31", "orario_inizio": "08:30", "orario_fine": "12:30"}',
+--     '{"agg": "false", "info": ""}'
+-- ),
+(
+    2, -- Analisi Matematica
+    2, -- Alessandro Zaccagnini
+    '{"data": "2025-01-23", "orario_inizio": "13:30", "orario_fine": "15:30"}',
+    '{"data": "2025-01-28", "orario_inizio": "13:30", "orario_fine": "15:30"}',
+    '{"agg": "false", "info": ""}'
 );
+-- (
+--     2, -- Analisi Matematica
+--     2, -- Alessandro Zaccagnini
+--     '{"data": "2025-02-06", "orario_inizio": "13:30", "orario_fine": "15:30"}',
+--     '{"data": "2025-02-11", "orario_inizio": "13:30", "orario_fine": "15:30"}',
+--     '{"agg": "false", "info": ""}'
+-- ),
+-- (
+--     3, -- Architettura degli Elaboratori
+--     3, -- Giuseppe Cota
+--     '{"data": "2025-02-12", "orario_inizio": "09:00", "orario_fine": "11:00"}',
+--     '{"data": "2025-02-11", "orario_inizio": "10:00", "orario_fine": "12:00"}',
+--     '{"agg": "false", "info": ""}'
+-- ),
+-- (
+--     4, -- Algebra e Geometria
+--     5, -- Anna Benini
+--     '{"data": "2025-01-31", "orario_inizio": "10:30", "orario_fine": "12:30"}',
+--     '{"data": "2025-01-28", "orario_inizio": "10:30", "orario_fine": "12:30"}',
+--     '{"agg": "false", "info": ""}'
+-- ),
+-- (
+--     5, -- Algoritmi e Strutture Dati
+--     16, -- Vincenzo Bonnici
+--     '{"data": "2025-02-03", "orario_inizio": "10:00", "orario_fine": "12:00"}',
+--     '{"data": "2025-02-06", "orario_inizio": "10:00", "orario_fine": "12:00"}',
+--     '{"agg": "false", "info": ""}'
+-- ),
+-- (
+--     6, -- Fisica
+--     7, -- Roberto De Pietri
+--     '{"data": "2025-02-06", "orario_inizio": "09:00", "orario_fine": "11:00"}',
+--     '{"data": "2025-02-07", "orario_inizio": "09:00", "orario_fine": "11:00"}',
+--     '{"agg": "false", "info": ""}'
+-- ),
+-- (
+--     7, -- Elementi di Probabilità
+--     8, -- Francesco Morandin
+--     '{"data": "2025-02-07", "orario_inizio": "14:30", "orario_fine": "16:30"}',
+--     '{"data": "2025-02-10", "orario_inizio": "09:30", "orario_fine": "11:30"}',
+--     '{"agg": "false", "info": ""}'
+-- ),
+-- (
+--     8, -- Basi di Dati
+--     9, -- Enea Zaffanella
+--     '{"data": "2025-01-27", "orario_inizio": "09:30", "orario_fine": "11:30"}',
+--     '{"data": "2025-01-29", "orario_inizio": "10:30", "orario_fine": "12:30"}',
+--     '{"agg": "true", "info": "Gli studenti che prenderanno un voto >25 alla prova scritta dovranno sostenere una prova orale in data che verrà comunicata dal docente."}'
+-- ),
+-- (
+--     9, -- Sistemi Informativi
+--     10, -- Giulio Destri
+--     '{"data": "2025-01-21", "orario_inizio": "14:30", "orario_fine": "16:00"}',
+--     '{"data": "2025-01-20", "orario_inizio": "09:00", "orario_fine": "10:30"}',
+--     '{"agg": "false", "info": ""}'
+-- ),
+-- (
+--     9, -- Sistemi Informativi
+--     10, -- Giulio Destri
+--     '{"data": "2025-02-04", "orario_inizio": "09:30", "orario_fine": "11:00"}',
+--     '{"data": "2025-01-20", "orario_inizio": "09:00", "orario_fine": "10:30"}',
+--     '{"agg": "false", "info": ""}'
+-- ),
+-- (
+--     10, -- Sistemi Operativi
+--     11, -- Flavio Bertini
+--     '{"data": "2025-01-31", "orario_inizio": "14:30", "orario_fine": "16:00"}',
+--     '{"data": "2025-01-29", "orario_inizio": "09:00", "orario_fine": "10:30"}',
+--     '{"agg": "false", "info": ""}'
+-- ),
+-- (
+--     11, -- Calcolo Numerico
+--     12, -- Chiara Guardasoni
+--     '{"data": "2025-02-11", "orario_inizio": "10:30", "orario_fine": "12:30"}',
+--     '{"data": "2025-02-10", "orario_inizio": "10:30", "orario_fine": "12:30"}',
+--     '{"agg": "false", "info": ""}'
+-- ),
+-- (
+--     12, -- Fondamenti dell'Informatica
+--     13, -- Roberto Bagnara
+--     '{"data": "2025-01-23", "orario_inizio": "08:30", "orario_fine": "10:30"}',
+--     '{"data": "2025-01-22", "orario_inizio": "08:30", "orario_fine": "10:30"}',
+--     '{"agg": "false", "info": ""}'
+-- ),
+-- (
+--     13, -- Laboratorio di Algoritmi e Strutture Dati
+--     4, -- Alessandro Dal Palù
+--     '{"data": "2025-02-12", "orario_inizio": "14:00", "orario_fine": "18:00"}',
+--     '{"data": "2025-02-11", "orario_inizio": "10:00", "orario_fine": "14:00"}',
+--     '{"agg": "false", "info": ""}'
+-- ),
+-- (
+--     14, -- Metodologie di Programmazione
+--     9, -- Enea Zaffanella
+--     '{"data": "2025-01-22", "orario_inizio": "08:30", "orario_fine": "10:30"}',
+--     '{"data": "2025-01-21", "orario_inizio": "08:30", "orario_fine": "10:30"}',
+--     '{"agg": "true", "info": "Gli studenti che prenderanno un voto >25 alla prova scritta dovranno sostenere una prova orale in data che verrà comunicata dal docente."}'
+-- ),
+-- (
+--     14, -- Metodologie di Programmazione
+--     9, -- Enea Zaffanella
+--     '{"data": "2025-02-05", "orario_inizio": "08:30", "orario_fine": "10:30"}',
+--     '{"data": "2025-02-06", "orario_inizio": "08:30", "orario_fine": "10:30"}',
+--     '{"agg": "true", "info": "Gli studenti che prenderanno un voto >25 alla prova scritta dovranno sostenere una prova orale in data che verrà comunicata dal docente."}'
+-- ),
+-- (
+--     15, -- Ingegneria del Software
+--     16, -- Vincenzo Bonnici
+--     '{"data": "2025-01-29", "orario_inizio": "09:00", "orario_fine": "11:00"}',
+--     '{"data": "2025-01-31", "orario_inizio": "09:00", "orario_fine": "11:00"}',
+--     '{"agg": "true", "info": "Gli studenti che passeranno lo scritto dovranno sottoporsi a un orale, che consiste nella presentazione di un progetto, in data da concordare con il docente."}'
+-- ),
+-- (
+--     15, -- Ingegneria del Software
+--     16, -- Vincenzo Bonnici
+--     '{"data": "2025-02-14", "orario_inizio": "09:00", "orario_fine": "11:00"}',
+--     '{"data": "2025-02-11", "orario_inizio": "09:00", "orario_fine": "11:00"}',
+--     '{"agg": "true", "info": "Gli studenti che passeranno lo scritto dovranno sottoporsi a un orale, che consiste nella presentazione di un progetto, in data da concordare con il docente."}'
+-- ),
+-- (
+--     16, -- Reti di Calcolatori
+--     14, -- Roberto Alfieri
+--     '{"data": "2025-01-22", "orario_inizio": "10:30", "orario_fine": "12:30"}',
+--     '{"data": "2025-01-23", "orario_inizio": "10:30", "orario_fine": "12:30"}',
+--     '{"agg": "true", "info": "In caso di passaggio della prova scritta, è prevista una prova orale indicativamente una settimana dopo la prova scritta."}'
+-- ),
+-- (
+--     16, -- Reti di Calcolatori
+--     14, -- Roberto Alfieri
+--     '{"data": "2025-02-06", "orario_inizio": "10:30", "orario_fine": "12:30"}',
+--     '{"data": "2025-02-05", "orario_inizio": "10:30", "orario_fine": "12:30"}',
+--     '{"agg": "true", "info": "In caso di passaggio della prova scritta, è prevista una prova orale indicativamente una settimana dopo la prova scritta."}'
+-- ),
+-- (
+--     17, -- Sistemi Informativi e Gestione d'Impresa
+--     15, -- Armando Sternieri
+--     '{"data": "2025-01-28", "orario_inizio": "15:00", "orario_fine": "17:00"}',
+--     '{"data": "2025-01-31", "orario_inizio": "15:00", "orario_fine": "17:00"}',
+--     '{"agg": "false", "info": ""}'
+-- ),
+-- (
+--     17, -- Sistemi Informativi e Gestione d'Impresa
+--     15, -- Armando Sternieri
+--     '{"data": "2025-02-11", "orario_inizio": "15:00", "orario_fine": "17:00"}',
+--     '{"data": "2025-02-14", "orario_inizio": "15:00", "orario_fine": "17:00"}',
+--     '{"agg": "false", "info": ""}'
+-- ),
+-- (
+--     18, -- Intelligenza Artificiale
+--     6, -- Federico Bergenti
+--     '{"data": "2025-01-30", "orario_inizio": "09:00", "orario_fine": "11:00"}',
+--     '{"data": "2025-02-03", "orario_inizio": "09:00", "orario_fine": "11:00"}',
+--     '{"agg": "true", "info": "La prova orale può essere richiesta a discrezione del docente."}'
+-- ),
+-- (
+--     18, -- Intelligenza Artificiale
+--     6, -- Federico Bergenti
+--     '{"data": "2025-02-12", "orario_inizio": "09:00", "orario_fine": "11:00"}',
+--     '{"data": "2025-02-17", "orario_inizio": "09:00", "orario_fine": "11:00"}',
+--     '{"agg": "true", "info": "La prova orale può essere richiesta a discrezione del docente."}'
+-- ),
+-- (
+--     19, -- Programmazione Parallela e HPC
+--     14, -- Roberto Alfieri
+--     '{"data": "2025-02-13", "orario_inizio": "09:00", "orario_fine": "18:00"}',
+--     '{"data": "2025-02-10", "orario_inizio": "09:00", "orario_fine": "18:00"}',
+--     '{"agg": "false", "info": ""}'
+-- ),
 
 -- Inserimento utenti
 INSERT INTO utenti (email, password, ruolo) VALUES

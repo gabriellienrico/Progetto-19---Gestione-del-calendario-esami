@@ -31,9 +31,6 @@ class Controller
         # api/users/login
         # api/ordini/
         switch ($parts[0]) {
-            case "storage":
-                $gateway = new StorageGateway();
-                break;
             case "session":
                 $gateway = new SessionGateway();
                 break;
