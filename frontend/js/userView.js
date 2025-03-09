@@ -1,37 +1,41 @@
 export class UserView {
 
     constructor() {
-        this.loginSection = document.getElementById("login-section");
-        this.loginForm = document.getElementById("loginForm");
-        this.logoutSection = document.getElementById("logout-section");
-        this.logoutButton = document.getElementById("logout-btn");
-        this.calendarSection = document.getElementById("calendar-section");
+        this.loginSection = document.getElementById("login-section")
+        this.loginForm = document.getElementById("loginForm")
+        this.logoutSection = document.getElementById("logout-section")
+        this.logoutButton = document.getElementById("logout-btn")
+        this.calendarSection = document.getElementById("calendar-section")
         
-        this.infoSection = document.getElementById("info-section");
-        this.nomeCorso = document.getElementById("corso");
-        this.annoCorso = document.getElementById("anno");
-        this.prof = document.getElementById("prof");
-        this.email = document.getElementById("email_prof");
-        this.inizio = document.getElementById("inizio");
-        this.fine = document.getElementById("fine");
-        this.note_section = document.getElementById("note-section");
-        this.note = document.getElementById("note");
+        this.infoSection = document.getElementById("info-section")
+        this.nomeCorso = document.getElementById("corso")
+        this.annoCorso = document.getElementById("anno")
+        this.prof = document.getElementById("prof")
+        this.email = document.getElementById("email_prof")
+        this.inizio = document.getElementById("inizio")
+        this.fine = document.getElementById("fine")
+        this.note_section = document.getElementById("note-section")
+        this.note = document.getElementById("note")
+
+        this.optimizeSection = document.getElementById("optimize-section")
     }
 
     showLogin() {
-        this.loginSection.style.display = "block";
-        this.calendarSection.style.display = "none";
-        this.logoutSection.style.display = "none";
+        this.loginSection.style.display = "block"
+        this.calendarSection.style.display = "none"
+        this.logoutSection.style.display = "none"
         //this.hideInfo()
-        this.calendarSection.classList.remove("col-lg-8");
-        this.calendarSection.classList.add("col-lg-12");
-        this.infoSection.style.display = "none";
+        this.calendarSection.classList.remove("col-lg-8")
+        this.calendarSection.classList.add("col-lg-12")
+        this.infoSection.style.display = "none"
+        this.optimizeSection.style.display ="none"
     }
 
     showCalendar() {
-        this.loginSection.style.display = "none";
-        this.calendarSection.style.display = "block";
-        this.logoutSection.style.display = "block";        
+        this.loginSection.style.display = "none"
+        this.calendarSection.style.display = "block"
+        this.optimizeSection.style.display = "block"     
+        //this.logoutSection.style.display = "block"
         //calendarColumn.classList.remove("col-lg-8");
         //calendarColumn.classList.add("col-lg-12");
         //this.initializeCalendar();
@@ -109,8 +113,11 @@ export class UserView {
             presenter.view.hideInfo()
         })
 
+        $("#ottimizza").click(function (event) {
+            presenter.applyOptimizedEvents(1)
+        }) 
+
         flatpickr.localize(flatpickr.l10ns.it)
 
-        
     }
 }

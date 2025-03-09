@@ -1,7 +1,7 @@
-/* html, body, main {
+html, body, main {
     margin: 0;
     padding: 0;
-} */
+}
 
 .fc-col-header-cell-cushion {
     /* color: black; */
@@ -44,21 +44,23 @@
     width: 100% !important;
 } */
 
-.fc-optimize-button, .fc-optimize_2-button {
-    background: blueviolet !important;
-    border-color: blueviolet !important;
-    font-weight: bold !important;
-}
 
-.fc-applica-button {
+
+/* .fc-applica-button {
     background: green !important;
     border-color: green !important;
     font-weight: bold !important;
-}
+} */
 
 .btn-primary {
     background: darkblue !important;
     border-color: darkblue !important;
+}
+
+.btn-secondary {
+    background: blueviolet !important;
+    border-color: blueviolet !important;
+    font-weight: bold !important;
 }
 
 #logout-btn {

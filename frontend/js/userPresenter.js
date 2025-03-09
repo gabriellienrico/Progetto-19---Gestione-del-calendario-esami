@@ -186,20 +186,40 @@ export class UserPresenter {
         }
     }
 
-    optimizeCalendar(option) {
+    updateDropdown(optimizedStates) {
+        let select = $("#optimization-options")
+        select.empty()
 
-        document.getElementById("loading-indicator").style.display = "block";
+        optimizedStates.forEach((opt, index) => {
+            select.append(`<option value="${index}">Opzione ${index + 1}</option>`)
+        })
+
+        //Quando cambia la selezione, aggiorna il calendario
+        select.off("change").on("change", function(event) {
+
+            let selectedIndex = $(event.target).val()
+            selectedIndex = parseInt(selectedIndex, 10)
+            this.updateCalendar(optimizedStates[selectedIndex])
+        }.bind(this))
+    }
+
+    updateCalendar(events) {
+        window.calendar.getEventSources().forEach(event => {
+            event.remove()
+        })
+        window.calendar.addEventSource(events)
+        window.calendar.render()
+    }
+
+    optimizeCalendar(option) {
+        //document.getElementById("loading-indicator").style.display = "block";
 
         // Funzione che verifica se due eventi sono nello stesso giorno
         function areOnSameDay(event1, event2) {
-            // Converte start in una data senza orario (solo giorno)
             let date1 = new Date(event1.start);
             let date2 = new Date(event2.start);
-
-            // Imposta l'orario a mezzanotte per entrambi gli eventi per comparare solo la data
             date1.setHours(0, 0, 0, 0);
             date2.setHours(0, 0, 0, 0);
-
             return date1.getTime() === date2.getTime();
         }
 
@@ -209,32 +229,35 @@ export class UserPresenter {
             let end1 = new Date(event1.end);
             let start2 = new Date(event2.start);
             let end2 = new Date(event2.end);
-
             return start1 < end2 && end1 > start2;
         }
 
         // Funzione che calcola il peso della sovrapposizione tra due eventi
         function getConflictWeight(event1, event2) {
-            // Caso 1: Sono dello stesso anno e nello stesso giorno
             if (event1.course_year === event2.course_year && areOnSameDay(event1, event2)) {
-                return 5; // Peso maggiore per eventi dello stesso anno nello stesso giorno
+                return 8;
             }
 
-            // Caso 2: Non sono dello stesso anno, ma si sovrappongono orariamente
+            if(event1.title === event2.title) {
+                let date1 = new Date(event1.start)
+                let date2 = new Date(event2.start)
+                let diff = (date2.getTime() - date1.getTime()) / (1000 * 3600 * 24)
+                if(Math.abs(diff) < 14) {
+                    return 4;
+                }
+            }
+
             if (event1.course_year !== event2.course_year && areOverlapping(event1, event2)) {
-                return 3; // Peso medio per eventi di anni diversi che si sovrappongono orariamente
+                return 3;
             }
 
-            // Caso 3: Non sono dello stesso anno e non si sovrappongono orariamente, ma sono nello stesso giorno
             if (event1.course_year !== event2.course_year && areOnSameDay(event1, event2)) {
-                return 1; // Peso minore per eventi di anni diversi ma nello stesso giorno
+                return 1;
             }
-
-            // Caso 4: Non ci sono conflitti
-            return 0; // Nessun conflitto
+            return 0;
         }
 
-        // Funzione che calcola il peso totale (cioè la somma dei conflitti) per una data configurazione
+        // Funzione che calcola il peso totale per una configurazione
         function calculateTotalWeight(events) {
             let totalWeight = 0;
             for (let i = 0; i < events.length; i++) {
@@ -251,113 +274,146 @@ export class UserPresenter {
         function generateNeighbors(currentState) {
             let neighbors = [];
 
-            // Per ogni evento, vediamo quale configurazione (start, end) è migliore
+            //console.log(currentState)
+        
             for (let event of currentState) {
-                let newState = JSON.parse(JSON.stringify(currentState)); // Clona lo stato
-                let eventCopy = newState.find(e => e.title === event.title);
-
-                // Calcola il peso se usiamo l'orario principale
-                let mainConfigWeight = 0;
-                let alternativeConfigWeight = 0;
-
-                // Prima config: start, end
-                eventCopy.start = event.start;
-                eventCopy.end = event.end;
-                mainConfigWeight = calculateTotalWeight(newState);
-
-                // Seconda config: start_2, end_2
-                eventCopy.start = event.start_2;
-                eventCopy.end = event.end_2;
-                alternativeConfigWeight = calculateTotalWeight(newState);
-
-                // Sostituire con la configurazione migliore (quella con il peso minore)
-                if (alternativeConfigWeight < mainConfigWeight) {
-                    // Se l'alternativa è migliore, usa start_2, end_2
-                    eventCopy.start = event.start_2;
-                    eventCopy.end = event.end_2;
-                } else {
-                    // Altrimenti mantieni la configurazione originale
-                    eventCopy.start = event.start;
-                    eventCopy.end = event.end;
-                }
-
-                neighbors.push(newState);
+                // Creiamo una copia profonda dello stato attuale
+                let newState1 = JSON.parse(JSON.stringify(currentState));
+                let newState2 = JSON.parse(JSON.stringify(currentState));
+        
+                // Troviamo l'evento corrispondente nella nuova copia
+                let eventCopy1 = newState1.find(e => e.appello_id === event.appello_id); // Usa un identificativo unico
+                //console.log(eventCopy1)
+                let eventCopy2 = newState2.find(e => e.appello_id === event.appello_id);
+        
+                // Prima configurazione: mantiene la data originale
+                eventCopy1.start = event.start;
+                eventCopy1.end = event.end;
+        
+                // Seconda configurazione: cambia alla seconda data disponibile
+                eventCopy2.start = event.start_2;
+                eventCopy2.end = event.end_2;
+        
+                // Aggiungiamo entrambe le nuove configurazioni agli stati vicini
+                neighbors.push(newState1);
+                neighbors.push(newState2);
             }
-
+        
             return neighbors;
         }
+        
+        
 
-        // Algoritmo di ottimizzazione basato su Dijkstra
+        // Algoritmo di ottimizzazione con controllo di stallo
         function dijkstraOptimization(initialState) {
             let queue = [{ state: initialState, weight: calculateTotalWeight(initialState) }];
             let visited = new Set();
-            //let bestState = initialState;
-            //let bestWeight = calculateTotalWeight(initialState);
-            let bestStates = []
-            let bestWeights = []
-            //console.log(bestWeight)
+            let bestStates = [];
+            //let bestWeights = [];
+            let minWeight = Infinity;
 
-            let iteration = 0
+            let noImprovementCount = 0; // Numero di tentativi senza miglioramento
+            let maxNoImprovementCount = 50; // Numero massimo di tentativi senza miglioramenti
+            let previousWeight = Infinity; // Variabile per il miglior peso globale
+
+            let iteration = 0;
 
             while (queue.length > 0) {
+                //console.log(queue.length)
                 // Ordina la coda per peso (stato con il peso più basso prima)
                 if (queue.length > 1) {
                     queue.sort((a, b) => a.weight - b.weight);
                 }
 
-                let { state, weight } = queue.shift(); // Estrai il primo stato dalla coda
+                let { state, weight } = queue.shift();
 
-                let stateKey = `${state.map(e => e.title).join('-')}-${state.map(e => e.start).join('-')}`
-                if (visited.has(stateKey))
-                    continue; // Salta se già visitato
+                if(weight < minWeight) {
+                    minWeight = weight;
+                    bestStates = [state];  //Resetta la lista con il nuovo minimo
+                } else if(weight === minWeight) {
+                    bestStates.push(state)  //Aggiunge un'altra ottimizzazione con lo stesso peso
+                }
+
+                console.log(weight + " e "+ previousWeight)
+                // Controlla se il peso è migliorato rispetto al miglior peso globale
+                if (weight != previousWeight) {
+                    previousWeight = weight;
+                    noImprovementCount = 0; // Reset del contatore
+                } else {
+                    noImprovementCount++;
+                }
+
+                // Se il numero massimo di tentativi senza miglioramenti è stato raggiunto, fermiamo
+                if (noImprovementCount >= maxNoImprovementCount) {
+                    console.log("Interrotto: nessun cambiamento dopo " + maxNoImprovementCount + " tentativi");
+                    break;
+                }
+
+                // Crea una chiave unica per ogni configurazione
+                let stateKey = `${state.map(e => e.title).join('-')}-${state.map(e => e.start).join('-')}`;
+
+                iteration++;
+
+                // Verifica se lo stato è già stato visitato
+                if (visited.has(stateKey)) {
+                    console.log("continue")
+                    continue;
+                }
                 visited.add(stateKey);
 
-                // if (weight < bestWeight) {
-                //     bestWeight = weight;
-                //     bestState = state;
+                // // Salva i migliori stati
+                // if (bestStates.length < 2) {
+                //     bestStates.push(state);
+                //     bestWeights.push(weight);
+                // } else {
+                //     if (weight < bestWeights[1]) {
+                //         if (weight < bestWeights[0]) {
+                //             bestStates[1] = bestStates[0];
+                //             bestWeights[1] = bestWeights[0];
+                //             bestStates[0] = state;
+                //             bestWeights[0] = weight;
+                //         } else {
+                //             bestStates[1] = state;
+                //             bestWeights[1] = weight;
+                //         }
+                //     }
                 // }
 
-                //Tiene traccia dei migliori stati
-                if (bestStates.length < 2) {
-                    bestStates.push(state)
-                    bestWeights.push(weight)
-                } else {
-                    //Se si trova un miglior stato (minor peso), si sostituisce la seconda migliore ottimizzazione
-                    if (weight < bestWeights[1]) {
-                        if (weight < bestWeights[0]) {
-                            bestStates[1] = bestStates[0]
-                            bestWeights[1] = bestWeights[0]
-                            bestStates[0] = state
-                            bestWeights[0] = weight
-                        } else {
-                            bestStates[1] = state
-                            bestWeights[1] = weight
-                        }
-
-                    }
-                }
+                
 
                 // Genera i vicini dello stato corrente
                 let neighbors = generateNeighbors(state);
+
                 for (let neighbor of neighbors) {
                     let neighborWeight = calculateTotalWeight(neighbor);
-                    let neighborKey = `${neighbor.map(e => e.title).join('-')}-${neighbor.map(e => e.start).join('-')}`
+                    let neighborKey = `${neighbor.map(e => e.title).join('-')}-${neighbor.map(e => e.start).join('-')}`;
 
-                    // Aggiungi il vicino alla coda se non è già stato visitato
                     if (!visited.has(neighborKey)) {
                         queue.push({ state: neighbor, weight: neighborWeight });
                     }
                 }
-                iteration++;
-                console.log("dijkstra optimization: "+iteration)
+                //iteration++;
+                console.log("iteration: "+iteration)
             }
-            console.log(bestWeights[option - 1])
-            if (option === 1)
-                return bestStates[0]
-            return bestStates[1]
+
+            // Restituisce tutte le ottimizzazioni con il peso minimo
+            return bestStates;
         }
 
-        return dijkstraOptimization(events);
+
+        // Ottimizza gli eventi
+        let optimizedStates = dijkstraOptimization(events);
+        //console.log(optimizedStates[0])
+
+        // Salva le ottimizzazioni nei bottoni
+        // if (option === 1) {
+        //     return optimizedStates[0]; // Restituisce la miglior ottimizzazione
+        // } else {
+        //     return optimizedStates[1]; // Restituisce la seconda miglior ottimizzazione
+        // }
+
+        this.updateDropdown(optimizedStates)
+        this.updateCalendar(optimizedStates[0])
     }
 
     updateEvents(date) {
@@ -403,7 +459,7 @@ export class UserPresenter {
 
         const calendarEl = document.getElementById('calendar');
         window.calendar = new window.FullCalendar.Calendar(calendarEl, {
-            height: window.outerWidth < 768 ? 'auto' : '90vh',
+            height: window.outerWidth < 768 ? 'auto' : '85vh',
             stickyHeaderDates: true,
             themeSystem: 'bootstrap5',
             selectable: true,
@@ -453,8 +509,8 @@ export class UserPresenter {
             footerToolbar: {
                 //right: 'prev,next today',
                 left: 'dayGridMonth,timeGridWeek,listMonth',
-                center: 'applica',
-                right: 'optimize,optimize_2'
+                //center: 'applica',
+                //right: 'optimize,optimize_2'
             },
             events: events,
             editable: true,
@@ -467,6 +523,8 @@ export class UserPresenter {
 
                 this.updateEvents(oldDate)
                 this.updateEvents(newDate)
+                if(document.getElementById("info-section").style.display === "block")
+                    this.view.showInfo(info.event)
 
             }.bind(this),
             dayCellDidMount: function (info) {
