@@ -37,7 +37,8 @@ class SessionGateway extends Gateway
                     // Se la sessione è attiva, restituisci un messaggio di successo
                     echo json_encode([
                         'logged_in' => true, 
-                        'user' => $_SESSION['user']
+                        'user' => $_SESSION['user']['id'],
+                        'role' => $_SESSION['user']['ruolo']
                     ]);
                 } 
                 // else {
@@ -57,71 +58,79 @@ class SessionGateway extends Gateway
                     exit();
                     // /users/login
                 } else if ($_SERVER["REQUEST_METHOD"] === "POST") {
-        
+                    
+
+                    if (!isset($_POST['email'], $_POST['password'])) { 
+                        echo json_encode([
+                            'success' => false,
+                            'logged_in' => false,
+                            'error' => 'Dati mancanti'
+                        ]);
+                        exit();
+                    }
+
                     $email = $_POST['email'];
                     $password = $_POST['password'];
 
                     $db = DBConnectionFactory::getFactory();
-                    $sql = "SELECT * FROM utenti";
+                    $sql = "SELECT * FROM utenti WHERE email = ?";
 
-                    $data = $db->fetchAll($sql);
+                    $data = $db->fetchAll($sql, [$email]);
 
-                    
-        
-                    // $file_path = "json/users.json";
-        
-                    // if (!file_exists($file_path)) {
-                    //     http_response_code(500);
-                    //     echo json_encode(array(
-                    //         'success' => false,
-                    //         'error' => array(
-                    //             'code' => 500,
-                    //             'message' => "File not found"
-                    //         )
-                    //     ));
-                    //     exit();
-                    // } 
-        
-                    // $data = json_decode(file_get_contents($file_path), true);
 
-                   //header("Content-Type: application/json");
-        
-                    foreach($data as $user) {
-                        if ($user["email"] === $email) {
-                            //utente trovato
-                            if(password_verify($password, $user["password"])) {
-                                //password corretta
-                                unset($user["password"]);
-                                $_SESSION["user"] = $user["id"];
-                                //header("Location: ../frontend/index.html");  //reindirizzamento flusso
-                                header("Content-Type: application/json");
-                                echo json_encode([
-                                    'success' => true,
-                                    'logged_in' => true,
-                                    'user' => $_SESSION['user']
-                                ]);
-                                exit();
-                            } 
-                            // else {
-                            //     //password errata
-                            //     echo json_encode([
-                            //         'success'=> false,
-                            //         'logged_in' => false,
-                            //         'error' => 'Password errata'
-                            //     ]);
-                            //     exit();
-                            // }
-                        } 
-                        // else {
-                        //     //utente non trovato
-                        //     echo json_encode([
-                        //         'success'=> false,
-                        //         'logged_in' => false,
-                        //         'error' => 'Utente non trovato'
-                        //     ]);
-                        //     exit();
-                        // }
+                    if(!empty($data)) { 
+                        $user = $data[0];
+                        if(password_verify($password, $user["password"])) { 
+                            //Password corretta, salvo l'utente nella sessione
+                            unset($user['password']);
+                            $_SESSION['user'] = $user;
+
+                            echo json_encode([
+                                'success' => true,
+                                'logged_in' => true,
+                                'user' => $_SESSION['user']
+                            ]);
+                            exit();
+                        }
                     }
+        
+                    // foreach($data as $user) {
+                    //     if ($user["email"] === $email) {
+                    //         //utente trovato
+                    //         if(password_verify($password, $user["password"])) {
+                    //             //password corretta
+                    //             unset($user["password"]);
+                    //             $_SESSION["user"] = $user["id"];
+                    //             //header("Location: ../frontend/index.html");  //reindirizzamento flusso
+                    //             header("Content-Type: application/json");
+                    //             echo json_encode([
+                    //                 'success' => true,
+                    //                 'logged_in' => true,
+                    //                 'user' => $_SESSION['user']
+                    //             ]);
+                        
+                    //             exit();
+                    //         } 
+                    //         // else {
+                    //         //     //password errata
+                    //         //     echo json_encode([
+                    //         //         'success'=> false,
+                    //         //         'logged_in' => false,
+                    //         //         'error' => 'Password errata'
+                    //         //     ]);
+                    //         //     exit();
+                    //         // }
+                    //     } 
+                    //     // else {
+                    //     //     //utente non trovato
+                    //     //     echo json_encode([
+                    //     //         'success'=> false,
+                    //     //         'logged_in' => false,
+                    //     //         'error' => 'Utente non trovato'
+                    //     //     ]);
+                    //     //     exit();
+                    //     // }
+                    // }
                     echo json_encode([
                         'success'=> false,
                         'logged_in' => false,
