@@ -23,13 +23,11 @@ class Controller
     {
 
         $uri = preg_replace("/^" . preg_quote($this->api, "/") . "/", "", $_SERVER['REQUEST_URI']);
-        # [user, login]
+
         $uri = preg_replace('/\\/$/', "", $uri);
 
         $parts = explode("/", $uri);
 
-        # api/users/login
-        # api/ordini/
         switch ($parts[0]) {
             case "session":
                 $gateway = new SessionGateway();

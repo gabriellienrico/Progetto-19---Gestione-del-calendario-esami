@@ -103,11 +103,7 @@ class DatabaseGateway extends Gateway
                         // /users/login
                     } else if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
-                        //$data = json_decode($_POST['events']);
                         $events = json_decode($_POST['events'], true);
-                        file_put_contents("debug.log", print_r($_POST, true));
-
-                        file_put_contents("debug.log", print_r($events, true));
 
                         if (isset($events) && is_array($events)) {
                             $db = DBConnectionFactory::getFactory();

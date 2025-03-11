@@ -19,6 +19,7 @@ export class UserView {
         this.note_section = document.getElementById("note-section")
         this.note = document.getElementById("note")
         this.applicaModifiche = document.getElementById("applica-modifiche-btn")
+        this.dateError = document.getElementById("date-error")
 
         this.optimizeSection = document.getElementById("optimize-section")
 
@@ -30,8 +31,7 @@ export class UserView {
         this.loginSection.style.display = "block"
         this.navbar.style.display = "none"
         this.calendarSection.style.display = "none"
-        //this.logoutSection.style.display = "none"
-        //this.hideInfo()
+
         this.calendarSection.classList.remove("col-lg-8")
         this.calendarSection.classList.add("col-lg-12")
         this.infoSection.style.display = "none"
@@ -48,10 +48,6 @@ export class UserView {
             console.log(role)
         } else 
             this.optimizeSection.style.display = "none"     
-        //this.logoutSection.style.display = "block"
-        //calendarColumn.classList.remove("col-lg-8");
-        //calendarColumn.classList.add("col-lg-12");
-        //this.initializeCalendar();
     }
 
     showInfo(appello, presenter) {
@@ -86,6 +82,7 @@ export class UserView {
     
             $("#inizio").change((event) => {
                 this.applicaModifiche.disabled = false
+                this.dateError.style.display = "none"
             })
     
             $("#fine").flatpickr({
@@ -100,14 +97,16 @@ export class UserView {
     
             $("#fine").change((event) => {
                 this.applicaModifiche.disabled = false
+                this.dateError.style.display = "none"
             })
     
             $("#applica-modifiche-btn").click((event) => {   
                 if(this.inizio.value < this.fine.value) {
                     presenter.setDates(appello, this.inizio.value, this.fine.value)
-                    //appello.setDates(this.inizio.value, this.fine.value)
                     this.applicaModifiche.disabled = true
+                    this.dateError.style.display = "none"
                 } else {
+                    this.dateError.style.display = "block"
                     console.log("errore")
                 }     
             })
@@ -147,6 +146,7 @@ export class UserView {
         this.calendarSection.classList.add("col-lg-12");
         this.infoSection.style.display = "none";
         this.applicaModifiche.disabled = true
+        this.dateError.style.display = "none"
         console.log(window.calendar)
         if(window.calendar !== null) 
             window.calendar.render()

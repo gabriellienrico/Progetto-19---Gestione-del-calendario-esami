@@ -2,6 +2,12 @@
 
 class DBConnectionFactory {
 
+    private $host;
+    private $username;
+    private $password;
+    private $dbname;
+    private $connection;
+
     private static $factory;
     public static function getFactory() {
         if(!self::$factory) {
@@ -14,21 +20,6 @@ class DBConnectionFactory {
         }
         return self::$factory;
     }
-
-    private $host;
-    private $username;
-    private $password;
-    private $dbname;
-    private $connection;
-
-    // public function __construct() {
-    //     $this->host = getenv('MYSQL_HOST');
-    //     $this->username = getenv('MYSQL_USER');
-    //     $this->password = getenv('MYSQL_PASSWORD');
-    //     $this->dbname = getenv('MYSQL_DATABASE');
-
-    //     $this->connect();
-    // }
 
     private function connect() {
         if($this->connection === null) 
@@ -62,7 +53,6 @@ class DBConnectionFactory {
         return $stmt;
     }
 
-    // Funzione per eseguire query di tipo UPDATE
     public function update($sql, $params = []) {
         $stmt = $this->query($sql, $params);
         $affectedRows = $stmt->affected_rows;

@@ -15,8 +15,7 @@ header("Expires: 0");
 require_once "database/DBConnectionFactory.php";
 
 
-class SessionGateway extends Gateway
-{
+class SessionGateway extends Gateway {
     public function handle_request($parts){
         // echo $parts;
         switch(count($parts)) {
@@ -25,7 +24,6 @@ class SessionGateway extends Gateway
             if ($_SERVER["REQUEST_METHOD"] === "OPTIONS") {
                 http_response_code(204);
                 exit();
-                // /users/login
             } else if ($_SERVER["REQUEST_METHOD"] === "GET") {
                 // Verifica se la variabile di sessione 'user' è settata
                 if (!isset($_SESSION['user'])) { 
@@ -41,13 +39,7 @@ class SessionGateway extends Gateway
                         'role' => $_SESSION['user']['ruolo']
                     ]);
                 } 
-                // else {
-                //     // Se la sessione non è attiva, restituisci un messaggio di errore
-                //     echo json_encode([
-                //         'logged_in' => false,
-                //         'user' => "Guest"
-                //     ]);
-                // }
+                exit();
             }
             break;
 
@@ -77,7 +69,6 @@ class SessionGateway extends Gateway
 
                     $data = $db->fetchAll($sql, [$email]);
 
-
                     if(!empty($data)) { 
                         $user = $data[0];
                         if(password_verify($password, $user["password"])) { 
@@ -94,43 +85,6 @@ class SessionGateway extends Gateway
                         }
                     }
         
-                    // foreach($data as $user) {
-                    //     if ($user["email"] === $email) {
-                    //         //utente trovato
-                    //         if(password_verify($password, $user["password"])) {
-                    //             //password corretta
-                    //             unset($user["password"]);
-                    //             $_SESSION["user"] = $user["id"];
-                    //             //header("Location: ../frontend/index.html");  //reindirizzamento flusso
-                    //             header("Content-Type: application/json");
-                    //             echo json_encode([
-                    //                 'success' => true,
-                    //                 'logged_in' => true,
-                    //                 'user' => $_SESSION['user']
-                    //             ]);
-                        
-                    //             exit();
-                    //         } 
-                    //         // else {
-                    //         //     //password errata
-                    //         //     echo json_encode([
-                    //         //         'success'=> false,
-                    //         //         'logged_in' => false,
-                    //         //         'error' => 'Password errata'
-                    //         //     ]);
-                    //         //     exit();
-                    //         // }
-                    //     } 
-                    //     // else {
-                    //     //     //utente non trovato
-                    //     //     echo json_encode([
-                    //     //         'success'=> false,
-                    //     //         'logged_in' => false,
-                    //     //         'error' => 'Utente non trovato'
-                    //     //     ]);
-                    //     //     exit();
-                    //     // }
-                    // }
                     echo json_encode([
                         'success'=> false,
                         'logged_in' => false,
@@ -142,10 +96,7 @@ class SessionGateway extends Gateway
                 if ($_SERVER["REQUEST_METHOD"] === "OPTIONS") {
                     http_response_code(204);
                     exit();
-                    // /users/login
                 } else if ($_SERVER["REQUEST_METHOD"] === "GET") {
-                    //$_SESSION['user'] = null;
-                    //session_start();
                     session_destroy();
                     echo json_encode([
                         'success' => true,

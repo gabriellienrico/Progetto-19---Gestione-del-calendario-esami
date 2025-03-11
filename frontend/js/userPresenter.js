@@ -60,14 +60,7 @@ export class UserPresenter {
             success: function (response) {
                 console.log(response);  // Verifica cosa ricevi dal server
                 if (response.success === true) {
-                    //console.log(events)
-                    //console.log(response.events)
                     events = this.mapEvents(response.events)
-                    //console.log(events.length)
-
-                    //this.optimizeCalendar()
-
-                    //console.log(events)
                 } else {
                     console.error("La risposta non è nel formato corretto");
                 }
@@ -91,7 +84,7 @@ export class UserPresenter {
                 const orario_inizio2 = this.convertDateFormat(opz_2.data, opz_2.orario_inizio)
                 const orario_fine2 = this.convertDateFormat(opz_2.data, opz_2.orario_fine)
                 const opz_agg = JSON.parse(event.opz_agg)
-                //const formattedDate2 = this.convertDateFormat(event.opz_2)
+                
                 return {
                     id: event.id,
                     title: corso.nome_corso,
@@ -109,9 +102,9 @@ export class UserPresenter {
             } else {
                 console.error("La risposta non è nel formato corretto")
             }
-            //console.log(event)
+            
         })
-        //console.log(mappedEvents)
+        
         return mappedEvents
     }
 
@@ -129,12 +122,10 @@ export class UserPresenter {
 
         //Ricerca eventi nello stesso giorno con stesso anno di corso
         let sameCourseEvents = sameDayEvents.filter(event => event.extendedProps.course_year === info.event.extendedProps.course_year);
-        //console.log(info.event.startStr)
 
         if (info.view.type === "dayGridMonth" || info.view.type === "timeGridWeek") {
             if (sameCourseEvents.length > 1) {
                 info.el.style.backgroundColor = 'red'
-                //info.event.setProp('color', 'red')
                 info.event.setProp('borderColor', 'firebrick')
             } else if (diffCourseEvents.length > 1) {
                 let hasConflict = false;
@@ -167,13 +158,10 @@ export class UserPresenter {
             }
         } else {
             if (sameCourseEvents.length > 1) {
-                //info.el.style.backgroundColor = 'red'
                 info.event.setProp('borderColor', 'red')
             } else if (sameDayEvents.length > 1) {
-                //info.el.style.backgroundColor = 'yellow'
                 info.event.setProp('borderColor', 'yellow')
             } else {
-                //info.el.style.backgroundColor = 'lightgreen'
                 info.event.setProp('borderColor', 'lightgreen')
             }
         }
@@ -182,7 +170,6 @@ export class UserPresenter {
             if (window.outerWidth < 768) {
                 let time = info.el.querySelector('.fc-event-time')
                 time.style.display = 'none'
-                //info.event.setProp('displayEventTime', false)
             }
         }
     }
@@ -200,9 +187,7 @@ export class UserPresenter {
         let newDate = new Date(start)
         this.updateEvents(newDate)
         this.updateEvents(oldDate)
-        //console.log(events)
-        //console.log(window.calendar.getEventById(appello.id).toPlainObject())
-
+    
         window.calendar.refetchEvents()
     }
 
@@ -234,7 +219,6 @@ export class UserPresenter {
     }
 
     optimizeCalendar(option) {
-        //document.getElementById("loading-indicator").style.display = "block";
 
         // Funzione che verifica se due eventi sono nello stesso giorno
         function areOnSameDay(event1, event2) {
@@ -304,7 +288,7 @@ export class UserPresenter {
                 let newState2 = JSON.parse(JSON.stringify(currentState));
 
                 // Troviamo l'evento corrispondente nella nuova copia
-                let eventCopy1 = newState1.find(e => e.appello_id === event.appello_id); // Usa un identificativo unico
+                let eventCopy1 = newState1.find(e => e.appello_id === event.appello_id); 
                 //console.log(eventCopy1)
                 let eventCopy2 = newState2.find(e => e.appello_id === event.appello_id);
 
@@ -402,17 +386,9 @@ export class UserPresenter {
             return bestStates;
         }
 
-
         // Ottimizza gli eventi
         let optimizedStates = dijkstraOptimization(events);
         //console.log(optimizedStates[0])
-
-        // Salva le ottimizzazioni nei bottoni
-        // if (option === 1) {
-        //     return optimizedStates[0]; // Restituisce la miglior ottimizzazione
-        // } else {
-        //     return optimizedStates[1]; // Restituisce la seconda miglior ottimizzazione
-        // }
 
         this.updateDropdown(optimizedStates)
         this.updateCalendar(optimizedStates[0])
@@ -475,30 +451,6 @@ export class UserPresenter {
             initialView: 'dayGridMonth',
             firstDay: 1,
             locale: 'it',
-            customButtons: {
-                optimize: {
-                    text: 'Opzione 1',
-                    click: function () {
-
-                        this.applyOptimizedEvents(1)
-
-                    }.bind(this)
-                },
-                optimize_2: {
-                    text: 'Opzione 2',
-                    click: function () {
-
-                        this.applyOptimizedEvents(2)
-
-                    }.bind(this)
-                },
-                optimize_3: {
-                    text: 'Opzione 3'
-                },
-                applica: {
-                    text: 'Applica modifiche'
-                }
-            },
             eventTimeFormat: { // like '14:30:00'
                 hour: '2-digit',
                 minute: '2-digit',
@@ -510,10 +462,7 @@ export class UserPresenter {
                 left: 'title'
             },
             footerToolbar: {
-                //right: 'prev,next today',
-                left: 'dayGridMonth,timeGridWeek,listMonth',
-                //center: 'applica',
-                //right: 'optimize,optimize_2'
+                left: 'dayGridMonth,timeGridWeek,listMonth'
             },
             events: events,
             editable: true,
@@ -585,13 +534,8 @@ export class UserPresenter {
             }
         })
 
-        //console.log(eventData)
-
-        //console.log(JSON.stringify({events: eventData}))
-        //console.log(events)
         let jsonData = JSON.stringify(eventData)
-        //console.log(eventData)
-        //console.log(jsonData)
+
         $.ajax({
             url: "http://localhost:8080/db/putAppelli",
             method: "POST",
@@ -606,9 +550,7 @@ export class UserPresenter {
                 console.log(response);
                 if (response.success === true) {
                     alert("Database aggiornato con successo!")
-                    //$('#not-found-section').hide()
-                    //this.checkSession() // Aggiorna l'interfaccia
-                    //$("#not-found-section").hide(); 
+                    
                 } else {
                     alert("Errore!")
                     //$('#not-found-section').show()
@@ -632,10 +574,8 @@ export class UserPresenter {
                 console.log(response);
                 if (response.logged_in) {
                     this.view.showCalendar(response.role)
-
-                    //this.getAppelli()
                     this.initializeCalendar()
-                    console.log(events)
+                    //console.log(events)
                 } else {
                     this.view.showLogin(response.role)
                 }
@@ -662,12 +602,10 @@ export class UserPresenter {
             success: function (response) {
                 console.log(response);
                 if (response.success === true) {
-                    console.log("admin")
                     setTimeout(() => {
                         $('#not-found-section').hide()
                         this.checkSession() // Aggiorna l'interfaccia
                     }, 300)
-                    //$("#not-found-section").hide(); 
                 } else {
                     $('#not-found-section').show()
                 }
