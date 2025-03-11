@@ -1,0 +1,38 @@
+
+<script type="module" src="../js/calendar-presenter.js"></script>
+<script> document.addEventListener('DOMContentLoaded', function() {
+    var calendarEl = document.getElementById('calendar');
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+        themeSystem: 'bootstrap',
+        initialView: 'dayGridMonth',
+        headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth'
+        },
+        //events: 'https://fullcalendar.io/api/demo-feeds/events.json'
+        events: [
+            {
+                title: 'All Day Event',
+                start: '2025-02-04'
+            },
+            {
+                title: 'All Day Event 2',
+                start: '2025-02-07'
+            }
+        ]
+    });
+    calendar.render();
+  }); 
+</script>
+<div>
+    <h1>Calendario</h1>
+    <div >
+
+    </div>
+    <div id="calendar">
+    
+    </div>
+</div>
+
+

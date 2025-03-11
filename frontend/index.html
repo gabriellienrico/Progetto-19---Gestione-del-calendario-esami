@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>UniCalendar</title>
+
+    <!-- jQuery UI CSS -->
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css"> -->
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.6.3/jquery-ui-timepicker-addon.min.css"> -->
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- FullCalendar CSS -->
+    <link href='https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css' rel='stylesheet'>
+
+    <link href="css/style.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+</head>
+
+<body>
+    <nav id="navbar" class="navbar fixed-top navbar-expand-lg navbar-light" style="background-color: rgba(255,255,255,0.9); display:none">
+        <section class="container-fluid">
+            <a class="navbar-brand" style="color: darkblue;">
+                <img src="img/logo-nero.png" height="40">
+                UniCalendar
+            </a>
+            <button
+                class="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarNavAltMarkup"
+                aria-controls="navbarNavAltMarkup"
+                aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <aside
+                class="collapse navbar-collapse justify-content-end"
+                id="navbarNavAltMarkup">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="home-btn" href="#">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="logout-btn" href="">Logout</a>
+                    </li>
+                    
+                </ul>
+            </aside>
+        </section>
+    </nav>
+    <main class="container-fluid mt-5 pt-1">
+        <div id="login-section" class="container-sm mt-3" style="max-width: 500px; display: none;">
+            <center class="mb-5"><img src="img/logo-color.png" style="max-width: 200px;"></center>
+            <h1>Login</h1>
+            <form class="row g-3 needs-validation" id="loginForm" novalidate>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email address</label>
+                    <input type="email" class="form-control" id="email" name="email" required>
+                    <div class="invalid-feedback">
+                        Please enter a valid email address.
+                    </div>
+                </div>
+                <div>
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="password" name="password" required>
+                </div>
+                <div id="not-found-section" style="display: none;">
+                    <label class="form-label" id="not-found" style="color: red">Nome utente o password errati</label>
+                </div>
+                <div class="col-12">
+                    <button id="login" class="btn btn-primary" type="submit">Login</button>
+                </div>
+
+            </form>
+
+        </div>
+            
+        <div id="calendar-column" class="row d-flex pt-3 mb-3">
+            <div id="calendar-section" class="col-lg-12" style="display: none;">
+                <div>
+
+                </div>
+                <div id="calendar">
+
+                </div>
+
+            </div>
+            <div id="info-section" class="col-lg-4" style="display: none;">
+                <div class="row d-flex">
+                    <h3 class="col-9">Dettagli appello</h3>
+                    <button id="hide-info-btn" type="button" class="btn col-3" aria-label="Close" style="text-align: right;">Chiudi</button>
+                </div>
+                
+                <form class="row g-3 needs-validation" id="infoForm" novalidate>
+                    <div>
+                        <label class="form-label">Corso:</label>
+                        <label id="corso" class="form-label" style="font-weight: bold">NomeCorso</label><br>
+                        <label class="form-label">Anno di corso:</label>
+                        <label id="anno" class="form-label" style="font-weight: bold">1</label><br>
+                        <label class="form-label">Professore:</label>
+                        <label id="prof" class="form-label" style="font-weight: bold">NomeCognome</label><br>
+                        <label class="form-label">Email:</label>
+                        <label id="email_prof" class="form-label" style="font-weight: bold">email@example.com</label>
+                    </div>
+                    <div>
+                        <label for="inizio" class="form-label">Data e ora di inizio:</label>
+                        <input type="datetime-local" class="form-control" id="inizio" name="inizio" step="1800" required>
+                        <label for="fine" class="form-label">Data e ora di fine:</label>
+                        <input type="datetime-local" class="form-control" id="fine" name="fine" step="1800" required>
+                    </div>
+                    <div id="note-section" style="display: none;">
+                        <label for="note" class="form-label">Note:</label>
+                        <textarea rows="5" cols="4" class="form-control" id="note" name="note"></textarea>
+                    </div>
+                    <div class="col-12">
+                        <button id="applica-modifiche-btn" type="button" class="btn btn-primary" disabled>Applica modifiche</button>
+                    </div>
+                </form>
+            </div>
+            <div id="loading-indicator" style="display: none;">
+                <div class="spinner-border text-primary" role="status"></div>
+            </div>
+        </div>
+
+        <div id="optimize-section" style="display: none">
+            <div class="row d-flex">
+                <div class="col-md-6 mb-2">
+                    <button class="btn btn-secondary" id="ottimizza" style="width: 100%">Ottimizza</button>
+                </div>
+                <div class="col-md-2 mb-2">
+                    <!-- <label for="optimization-options" class="ps-0">Seleziona un'opzione:</label> -->
+                    <select id="optimization-options" class="form-select"></select>
+                </div>
+                <div class="col-md-4 mb-2">
+                    <button class="btn btn-success" id="conferma" style="width: 100%" disabled>Conferma</button>
+                </div>
+            </div>
+        </div>
+
+
+    </main>
+
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script> -->
+
+    <!-- Timepicker Addon -->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.6.3/jquery-ui-timepicker-addon.min.js"></script> -->
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
+    <script type="module" src="script.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://npmcdn.com/flatpickr/dist/l10n/it.js"></script>
+
+</body>
+
+</html>

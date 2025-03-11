@@ -1,0 +1,23 @@
+FROM php:8.1-apache
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ=Europe/Rome
+
+RUN apt-get update && apt-get install -y \
+    libpng-dev \
+    libjpeg-dev \
+    libfreetype6-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j$(nproc) gd mysqli pdo_mysql
+
+RUN mkdir /var/www/api/
+
+RUN a2enmod rewrite
+
+COPY ./apache-conf/000-default.conf /etc/apache2/sites-available/000-default.conf
+COPY ./apache-conf/ports.conf /etc/apache2/ports.conf
+
+EXPOSE 80
+EXPOSE 8080
+
+CMD ["apache2ctl", "-D", "FOREGROUND"]

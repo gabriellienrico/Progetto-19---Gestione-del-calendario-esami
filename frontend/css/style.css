@@ -1,0 +1,107 @@
+html, body, main {
+    margin: 0;
+    padding: 0;
+}
+
+.fc-col-header-cell-cushion {
+    /* color: black; */
+    text-decoration: none;
+    color: blue;
+}
+
+.fc-event-time, .fc-event-title {
+    font-size: var(--fc-small-font-size);
+    color: black;
+}
+
+.fc-daygrid-day-number {
+    color: black;
+    text-decoration: none;
+    border-radius: 1rem;
+    /* background-color: blue; */
+    width: 2rem;
+    margin: 0.25rem;
+    text-align: center;
+}
+
+.fc-daygrid-event-dot {
+    display: none;
+}
+
+.fc-event {
+    padding-left: 0.25em;
+    padding-right: 0.25em;
+    /* background-color: darksalmon; */
+}
+
+.fc-button-primary {
+    padding: 0.4rem !important; 
+    background: darkblue !important;
+    border-color: darkblue !important;
+}
+
+/* .fc-footer-toolbar .fc-toolbar-chunk {
+    width: 100% !important;
+} */
+
+
+
+/* .fc-applica-button {
+    background: green !important;
+    border-color: green !important;
+    font-weight: bold !important;
+} */
+
+.btn-primary {
+    background: darkblue !important;
+    border-color: darkblue !important;
+}
+
+.btn-secondary {
+    background: blueviolet !important;
+    border-color: blueviolet !important;
+    font-weight: bold !important;
+}
+
+#logout-btn {
+    padding-right: 0;
+}
+
+#loading-indicator {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    border-radius: 5px;
+    font-size: 16px;
+    text-align: center;
+    z-index: 1000; 
+    background: none;
+} 
+
+.spinner-border {
+    border: 0.3rem solid blue;
+    background: none;
+    border-top: 0.3rem solid white;
+    /* border-bottom: 0.3rem solid blue; */
+    width: 4rem;
+    height: 4rem;
+    position:static;
+    /*border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite; */
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+#info-section {
+    border-left: 0.1em solid black;
+}
