@@ -70,13 +70,12 @@ class DBConnectionFactory {
         return $affectedRows;
     }
 
-    public function fetchAll($sql) {
-        $stmt = $this->query($sql);
+    public function fetchAll($sql, $params = []) {
+        $stmt = $this->query($sql, $params);
         $result = $stmt->get_result();
         $rows = $result->fetch_all(MYSQLI_ASSOC);
         $stmt->close();
         return $rows;
     }
-
     
 }

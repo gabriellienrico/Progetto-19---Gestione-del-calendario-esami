@@ -21,9 +21,12 @@ export class UserView {
         this.applicaModifiche = document.getElementById("applica-modifiche-btn")
 
         this.optimizeSection = document.getElementById("optimize-section")
+
+        this.role = null
     }
 
-    showLogin() {
+    showLogin(role) {
+        this.role = role
         this.loginSection.style.display = "block"
         this.navbar.style.display = "none"
         this.calendarSection.style.display = "none"
@@ -35,11 +38,16 @@ export class UserView {
         this.optimizeSection.style.display ="none"
     }
 
-    showCalendar() {
+    showCalendar(role) {
+        this.role = role
         this.loginSection.style.display = "none"
         this.navbar.style.display = "block"
         this.calendarSection.style.display = "block"
-        this.optimizeSection.style.display = "block"     
+        if(this.role === "admin") {
+            this.optimizeSection.style.display = "block"
+            console.log(role)
+        } else 
+            this.optimizeSection.style.display = "none"     
         //this.logoutSection.style.display = "block"
         //calendarColumn.classList.remove("col-lg-8");
         //calendarColumn.classList.add("col-lg-12");
@@ -62,41 +70,71 @@ export class UserView {
             this.note_section.style.display = "none"
         }
 
-        $("#inizio").flatpickr({
-            time_24hr: true,
-            minuteIncrement: 30,
-            dateFormat: "Y-m-dTH:i",
-            enableTime: true,
-            disableMobile: true,
-            defaultDate: this.inizio.value
-        })
+        if(this.role === "admin") {
+            this.applicaModifiche.style.display = "block"
+            this.note.disabled = false
 
-        $("#inizio").change((event) => {
-            this.applicaModifiche.disabled = false
-        })
+            $("#inizio").flatpickr({
+                time_24hr: true,
+                minuteIncrement: 30,
+                dateFormat: "Y-m-dTH:i",
+                enableTime: true,
+                disableMobile: true,
+                defaultDate: this.inizio.value,
+                clickOpens: true
+            })
+    
+            $("#inizio").change((event) => {
+                this.applicaModifiche.disabled = false
+            })
+    
+            $("#fine").flatpickr({
+                time_24hr: true,
+                minuteIncrement: 30,
+                dateFormat: "Y-m-dTH:i",
+                enableTime: true,
+                disableMobile: true,
+                defaultDate: this.fine.value,
+                clickOpens: true
+            })
+    
+            $("#fine").change((event) => {
+                this.applicaModifiche.disabled = false
+            })
+    
+            $("#applica-modifiche-btn").click((event) => {   
+                if(this.inizio.value < this.fine.value) {
+                    presenter.setDates(appello, this.inizio.value, this.fine.value)
+                    //appello.setDates(this.inizio.value, this.fine.value)
+                    this.applicaModifiche.disabled = true
+                } else {
+                    console.log("errore")
+                }     
+            })
+        } else {
+            $("#inizio").flatpickr({
+                time_24hr: true,
+                dateFormat: "Y-m-dTH:i",
+                enableTime: true,
+                disableMobile: true,
+                defaultDate: this.inizio.value,
+                clickOpens: false
+            })
 
-        $("#fine").flatpickr({
-            time_24hr: true,
-            minuteIncrement: 30,
-            dateFormat: "Y-m-dTH:i",
-            enableTime: true,
-            disableMobile: true,
-            defaultDate: this.fine.value
-        })
+            $("#fine").flatpickr({
+                time_24hr: true,
+                dateFormat: "Y-m-dTH:i",
+                enableTime: true,
+                disableMobile: true,
+                defaultDate: this.inizio.value,
+                clickOpens: false
+            })
 
-        $("#fine").change((event) => {
-            this.applicaModifiche.disabled = false
-        })
+            this.note.disabled = true
+            this.applicaModifiche.style.display = "none"
+        }
 
-        $("#applica-modifiche-btn").click((event) => {   
-            if(this.inizio.value < this.fine.value) {
-                presenter.setDates(appello, this.inizio.value, this.fine.value)
-                //appello.setDates(this.inizio.value, this.fine.value)
-                this.applicaModifiche.disabled = true
-            } else {
-                console.log("errore")
-            }     
-        })
+        
 
         this.calendarSection.classList.remove("col-lg-12")
         this.calendarSection.classList.add("col-lg-8")

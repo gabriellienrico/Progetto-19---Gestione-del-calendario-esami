@@ -1,3 +1,7 @@
+
+-- Impostiamo il charset per la sessione corrente
+SET NAMES 'utf8mb4';
+
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
@@ -8,14 +12,6 @@ CREATE TABLE corsi (
     nome_corso VARCHAR(100) NOT NULL,
     anno_corso INT NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- -- Tabella professori
--- CREATE TABLE professori (
---     id INT AUTO_INCREMENT PRIMARY KEY,
---     nome VARCHAR(100) NOT NULL,
---     cognome VARCHAR(100) NOT NULL,
---     email VARCHAR(255) UNIQUE NOT NULL
--- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Tabella utenti
 CREATE TABLE utenti (
@@ -85,7 +81,8 @@ INSERT INTO utenti (nome, cognome, email, password, ruolo) VALUES
 ('Roberto', 'Alfieri', 'roberto.alfieri@unipr.it', '$2a$12$J1br/BtKoEMbyP14ZXBDXeK3HF6Fdm0dO9dvvgVfY5/qtMeMQ09Yu', 'prof'),
 ('Armando', 'Sternieri', 'armando.sternieri@unipr.it', '$2a$12$J1br/BtKoEMbyP14ZXBDXeK3HF6Fdm0dO9dvvgVfY5/qtMeMQ09Yu', 'prof'),
 ('Vincenzo', 'Bonnici', 'vincenzo.bonnici@unipr.it', '$2a$12$J1br/BtKoEMbyP14ZXBDXeK3HF6Fdm0dO9dvvgVfY5/qtMeMQ09Yu', 'prof'),
-('Nome', 'Cognome', 'admin@example.com', '$2a$12$k.ukq87uM7B4keBt8T.4JuoR/V9QDxK5wqd2g0BRRpcv5zNwRbjsm', 'admin');
+('Enrico', 'Gabrielli', 'enrico.gabrielli@studenti.unipr.it', '$2a$12$M8dPOY5OooiolRcXR97exeR.5g5gD5cM0bZyO8cN60wXbKz1lzLz6', 'student'),
+('Mario', 'Rossi', 'administrator@unipr.it', '$2a$12$oPRSIaSYkGB9EdQqg7Vpv.lSK33ga7BRNh4gwa3syYkCnTZhiDg3e', 'admin');
 
 -- Inserimento appelli
 INSERT INTO appelli (corso, professore, opz_1, opz_2, opz_agg) VALUES

@@ -631,13 +631,13 @@ export class UserPresenter {
             success: function (response) {
                 console.log(response);
                 if (response.logged_in) {
-                    this.view.showCalendar()
+                    this.view.showCalendar(response.role)
 
                     //this.getAppelli()
                     this.initializeCalendar()
                     console.log(events)
                 } else {
-                    this.view.showLogin()
+                    this.view.showLogin(response.role)
                 }
             }.bind(this),
             error: function (response) {
@@ -662,8 +662,11 @@ export class UserPresenter {
             success: function (response) {
                 console.log(response);
                 if (response.success === true) {
-                    $('#not-found-section').hide()
-                    this.checkSession() // Aggiorna l'interfaccia
+                    console.log("admin")
+                    setTimeout(() => {
+                        $('#not-found-section').hide()
+                        this.checkSession() // Aggiorna l'interfaccia
+                    }, 300)
                     //$("#not-found-section").hide(); 
                 } else {
                     $('#not-found-section').show()
