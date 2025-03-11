@@ -12,6 +12,9 @@ header("Cache-Control: no-cache, must-revalidate");  // HTTP/1.1
 header("Pragma: no-cache");  // HTTP/1.0
 header("Expires: 0");
 
+require_once "database/DBConnectionFactory.php";
+
+
 class SessionGateway extends Gateway
 {
     public function handle_request($parts){
@@ -57,22 +60,31 @@ class SessionGateway extends Gateway
         
                     $email = $_POST['email'];
                     $password = $_POST['password'];
+
+                    $db = DBConnectionFactory::getFactory();
+                    $sql = "SELECT * FROM utenti";
+
+                    $data = $db->fetchAll($sql);
+
+                    
         
-                    $file_path = "json/users.json";
+                    // $file_path = "json/users.json";
         
-                    if (!file_exists($file_path)) {
-                        http_response_code(500);
-                        echo json_encode(array(
-                            'success' => false,
-                            'error' => array(
-                                'code' => 500,
-                                'message' => "File not found"
-                            )
-                        ));
-                        exit();
-                    } 
+                    // if (!file_exists($file_path)) {
+                    //     http_response_code(500);
+                    //     echo json_encode(array(
+                    //         'success' => false,
+                    //         'error' => array(
+                    //             'code' => 500,
+                    //             'message' => "File not found"
+                    //         )
+                    //     ));
+                    //     exit();
+                    // } 
         
-                    $data = json_decode(file_get_contents($file_path), true);
+                    // $data = json_decode(file_get_contents($file_path), true);
+
+                   //header("Content-Type: application/json");
         
                     foreach($data as $user) {
                         if ($user["email"] === $email) {
@@ -89,25 +101,33 @@ class SessionGateway extends Gateway
                                     'user' => $_SESSION['user']
                                 ]);
                                 exit();
-                            } else {
-                                //password errata
-                                echo json_encode([
-                                    'success'=> false,
-                                    'logged_in' => false,
-                                    'error' => 'Password errata'
-                                ]);
-                                exit();
-                            }
-                        } else {
-                            //utente non trovato
-                            echo json_encode([
-                                'success'=> false,
-                                'logged_in' => false,
-                                'error' => 'Utente non trovato'
-                            ]);
-                            exit();
-                        }
+                            } 
+                            // else {
+                            //     //password errata
+                            //     echo json_encode([
+                            //         'success'=> false,
+                            //         'logged_in' => false,
+                            //         'error' => 'Password errata'
+                            //     ]);
+                            //     exit();
+                            // }
+                        } 
+                        // else {
+                        //     //utente non trovato
+                        //     echo json_encode([
+                        //         'success'=> false,
+                        //         'logged_in' => false,
+                        //         'error' => 'Utente non trovato'
+                        //     ]);
+                        //     exit();
+                        // }
                     }
+                    echo json_encode([
+                        'success'=> false,
+                        'logged_in' => false,
+                        'error' => 'Utente non trovato'
+                    ]);
+                    exit();
                 }
             } else if($parts[1] == "logout") {
                 if ($_SERVER["REQUEST_METHOD"] === "OPTIONS") {

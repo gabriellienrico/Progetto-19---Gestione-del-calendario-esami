@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>UniCalendar</title>
 
     <!-- jQuery UI CSS -->
     <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css"> -->
@@ -22,9 +22,12 @@
 </head>
 
 <body>
-    <nav class="navbar fixed-top navbar-expand-lg" style="background-color: rgba(255,255,255,0.9)">
+    <nav id="navbar" class="navbar fixed-top navbar-expand-lg navbar-light" style="background-color: rgba(255,255,255,0.9); display:none">
         <section class="container-fluid">
-            <a class="navbar-brand" style="color: darkblue;">UniCalendar</a>
+            <a class="navbar-brand" style="color: darkblue;">
+                <img src="img/logo-nero.png" height="40">
+                UniCalendar
+            </a>
             <button
                 class="navbar-toggler"
                 type="button"
@@ -38,14 +41,21 @@
             <aside
                 class="collapse navbar-collapse justify-content-end"
                 id="navbarNavAltMarkup">
-                <div class="navbar-nav">
-                    <a class="nav-link text-danger" id="logout-btn">Logout</a>
-                </div>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="home-btn" href="#">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="logout-btn" href="">Logout</a>
+                    </li>
+                    
+                </ul>
             </aside>
         </section>
     </nav>
-    <main class="container-fluid mt-5">
-        <div id="login-section" class="container-sm mt-3" style="max-width: 500px;">
+    <main class="container-fluid mt-5 pt-1">
+        <div id="login-section" class="container-sm mt-3" style="max-width: 500px; display: none;">
+            <center class="mb-5"><img src="img/logo-color.png" style="max-width: 200px;"></center>
             <h1>Login</h1>
             <form class="row g-3 needs-validation" id="loginForm" novalidate>
                 <div class="mb-3">
@@ -108,7 +118,7 @@
                         <textarea rows="5" cols="4" class="form-control" id="note" name="note"></textarea>
                     </div>
                     <div class="col-12">
-                        <button id="fsdfds" type="button" class="btn btn-primary">Modifica</button>
+                        <button id="applica-modifiche-btn" type="button" class="btn btn-primary" disabled>Applica modifiche</button>
                     </div>
                 </form>
             </div>
@@ -119,27 +129,18 @@
 
         <div id="optimize-section" style="display: none">
             <div class="row d-flex">
-                <div class="col-md-6">
+                <div class="col-md-6 mb-2">
                     <button class="btn btn-secondary" id="ottimizza" style="width: 100%">Ottimizza</button>
                 </div>
-                <div class="col-md-2 px-3">
+                <div class="col-md-2 mb-2">
                     <!-- <label for="optimization-options" class="ps-0">Seleziona un'opzione:</label> -->
                     <select id="optimization-options" class="form-select"></select>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-4 mb-2">
                     <button class="btn btn-success" id="conferma" style="width: 100%" disabled>Conferma</button>
                 </div>
             </div>
         </div>
-
-        <div id="logout-section" class="container-sm mt-3" style="max-width: 500px; display: none;">
-            <h1>Logout</h1>
-            <div class="col-md">
-                <button id="logout-btn" class="btn btn-primary">Logout</button>
-            </div>
-        </div>
-
-
 
 
     </main>

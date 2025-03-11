@@ -58,15 +58,24 @@ class DBConnectionFactory {
         }
 
         $stmt->execute();
-        $result = $stmt->get_result();
-        $stmt->close();
+    
+        return $stmt;
+    }
 
-        return $result;
+    // Funzione per eseguire query di tipo UPDATE
+    public function update($sql, $params = []) {
+        $stmt = $this->query($sql, $params);
+        $affectedRows = $stmt->affected_rows;
+        $stmt->close();
+        return $affectedRows;
     }
 
     public function fetchAll($sql) {
-        $result = $this->connect()->query($sql);
-        return $result->fetch_all(MYSQLI_ASSOC);
+        $stmt = $this->query($sql);
+        $result = $stmt->get_result();
+        $rows = $result->fetch_all(MYSQLI_ASSOC);
+        $stmt->close();
+        return $rows;
     }
 
     

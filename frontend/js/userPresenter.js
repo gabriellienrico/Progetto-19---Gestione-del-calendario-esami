@@ -47,7 +47,7 @@ export class UserPresenter {
             }
         });
         if (response.responseJSON.success === true)
-            return response.responseJSON.prof[0];
+            return response.responseJSON.user[0];
         else
             return;
     }
@@ -93,6 +93,7 @@ export class UserPresenter {
                 const opz_agg = JSON.parse(event.opz_agg)
                 //const formattedDate2 = this.convertDateFormat(event.opz_2)
                 return {
+                    id: event.id,
                     title: corso.nome_corso,
                     start: orario_inizio1,
                     end: orario_fine1,
@@ -186,6 +187,25 @@ export class UserPresenter {
         }
     }
 
+    setDates(appello, start, end) {
+
+        let oldDate = appello.start
+        let app = window.calendar.getEventById(appello.id)
+        app.setDates(start, end)
+
+        let eventIndex = events.findIndex(e => e.id === appello.id)
+        events[eventIndex].start = start 
+        events[eventIndex].end = end
+
+        let newDate = new Date(start)
+        this.updateEvents(newDate)
+        this.updateEvents(oldDate)
+        //console.log(events)
+        //console.log(window.calendar.getEventById(appello.id).toPlainObject())
+
+        window.calendar.refetchEvents()
+    }
+
     updateDropdown(optimizedStates) {
         let select = $("#optimization-options")
         select.empty()
@@ -195,7 +215,7 @@ export class UserPresenter {
         })
 
         //Quando cambia la selezione, aggiorna il calendario
-        select.off("change").on("change", function(event) {
+        select.off("change").on("change", function (event) {
 
             let selectedIndex = $(event.target).val()
             selectedIndex = parseInt(selectedIndex, 10)
@@ -203,12 +223,14 @@ export class UserPresenter {
         }.bind(this))
     }
 
-    updateCalendar(events) {
+    updateCalendar(ev) {
         window.calendar.getEventSources().forEach(event => {
             event.remove()
         })
-        window.calendar.addEventSource(events)
+        window.calendar.addEventSource(ev)
         window.calendar.render()
+
+        events = ev
     }
 
     optimizeCalendar(option) {
@@ -238,11 +260,11 @@ export class UserPresenter {
                 return 8;
             }
 
-            if(event1.title === event2.title) {
+            if (event1.title === event2.title) {
                 let date1 = new Date(event1.start)
                 let date2 = new Date(event2.start)
                 let diff = (date2.getTime() - date1.getTime()) / (1000 * 3600 * 24)
-                if(Math.abs(diff) < 14) {
+                if (Math.abs(diff) < 14) {
                     return 4;
                 }
             }
@@ -275,34 +297,34 @@ export class UserPresenter {
             let neighbors = [];
 
             //console.log(currentState)
-        
+
             for (let event of currentState) {
                 // Creiamo una copia profonda dello stato attuale
                 let newState1 = JSON.parse(JSON.stringify(currentState));
                 let newState2 = JSON.parse(JSON.stringify(currentState));
-        
+
                 // Troviamo l'evento corrispondente nella nuova copia
                 let eventCopy1 = newState1.find(e => e.appello_id === event.appello_id); // Usa un identificativo unico
                 //console.log(eventCopy1)
                 let eventCopy2 = newState2.find(e => e.appello_id === event.appello_id);
-        
+
                 // Prima configurazione: mantiene la data originale
                 eventCopy1.start = event.start;
                 eventCopy1.end = event.end;
-        
+
                 // Seconda configurazione: cambia alla seconda data disponibile
                 eventCopy2.start = event.start_2;
                 eventCopy2.end = event.end_2;
-        
+
                 // Aggiungiamo entrambe le nuove configurazioni agli stati vicini
                 neighbors.push(newState1);
                 neighbors.push(newState2);
             }
-        
+
             return neighbors;
         }
-        
-        
+
+
 
         // Algoritmo di ottimizzazione con controllo di stallo
         function dijkstraOptimization(initialState) {
@@ -327,14 +349,14 @@ export class UserPresenter {
 
                 let { state, weight } = queue.shift();
 
-                if(weight < minWeight) {
+                if (weight < minWeight) {
                     minWeight = weight;
                     bestStates = [state];  //Resetta la lista con il nuovo minimo
-                } else if(weight === minWeight) {
+                } else if (weight === minWeight) {
                     bestStates.push(state)  //Aggiunge un'altra ottimizzazione con lo stesso peso
                 }
 
-                console.log(weight + " e "+ previousWeight)
+                console.log(weight + " e " + previousWeight)
                 // Controlla se il peso è migliorato rispetto al miglior peso globale
                 if (weight != previousWeight) {
                     previousWeight = weight;
@@ -359,27 +381,7 @@ export class UserPresenter {
                     console.log("continue")
                     continue;
                 }
-                visited.add(stateKey);
-
-                // // Salva i migliori stati
-                // if (bestStates.length < 2) {
-                //     bestStates.push(state);
-                //     bestWeights.push(weight);
-                // } else {
-                //     if (weight < bestWeights[1]) {
-                //         if (weight < bestWeights[0]) {
-                //             bestStates[1] = bestStates[0];
-                //             bestWeights[1] = bestWeights[0];
-                //             bestStates[0] = state;
-                //             bestWeights[0] = weight;
-                //         } else {
-                //             bestStates[1] = state;
-                //             bestWeights[1] = weight;
-                //         }
-                //     }
-                // }
-
-                
+                visited.add(stateKey)
 
                 // Genera i vicini dello stato corrente
                 let neighbors = generateNeighbors(state);
@@ -393,7 +395,7 @@ export class UserPresenter {
                     }
                 }
                 //iteration++;
-                console.log("iteration: "+iteration)
+                console.log("iteration: " + iteration)
             }
 
             // Restituisce tutte le ottimizzazioni con il peso minimo
@@ -423,6 +425,7 @@ export class UserPresenter {
 
         events.forEach(event => {
             let newProps = {
+                id: event.id,
                 title: event.title,
                 start: event.start,
                 end: event.end,
@@ -515,16 +518,39 @@ export class UserPresenter {
             events: events,
             editable: true,
             eventClick: function (info) {
-                this.view.showInfo(info.event)
+                this.view.showInfo(info.event, this)
+                console.log(info.event.id)
+                document.getElementById("applica-modifiche-btn").disabled = true
             }.bind(this),
             eventDrop: function (info) {
-                let oldDate = info.oldEvent.start;
+
+
+                let oldDate = info.oldEvent.start
                 let newDate = info.event.start
+
+                console.log(info.event.id)
+                console.log(events)
+
+                let eventIndex = events.findIndex(e => e.id === info.event.extendedProps.appello_id)
+
+                console.log(eventIndex)
+                
+                events[eventIndex].start = info.event.startStr.slice(0, -9) //rimuovo gli ultimi 9 caratteri: 2025-01-09T8:30:00+01:00 --> 2025-01-09T8:30
+                events[eventIndex].end = info.event.endStr.slice(0, -9) 
+
+                //console.log(events)
 
                 this.updateEvents(oldDate)
                 this.updateEvents(newDate)
-                if(document.getElementById("info-section").style.display === "block")
-                    this.view.showInfo(info.event)
+
+                //window.calendar.render()
+                if (document.getElementById("info-section").style.display === "block") {
+                    this.view.showInfo(info.event, this)
+                    //document.getElementById("applica-modifiche-btn").disabled = false
+                }
+
+                document.getElementById("conferma").disabled = false
+                
 
             }.bind(this),
             dayCellDidMount: function (info) {
@@ -547,6 +573,51 @@ export class UserPresenter {
             }.bind(this)
         });
         window.calendar.render();
+    }
+
+    updateDatabase() {
+
+        let eventData = events.map(event => {
+            return {
+                id: event.id,
+                start: event.start,
+                end: event.end
+            }
+        })
+
+        //console.log(eventData)
+
+        //console.log(JSON.stringify({events: eventData}))
+        //console.log(events)
+        let jsonData = JSON.stringify(eventData)
+        //console.log(eventData)
+        //console.log(jsonData)
+        $.ajax({
+            url: "http://localhost:8080/db/putAppelli",
+            method: "POST",
+            data: {
+                events: jsonData
+            },
+            dataType: "json",
+            xhrFields: {
+                withCredentials: true
+            },
+            success: function (response) {
+                console.log(response);
+                if (response.success === true) {
+                    alert("Database aggiornato con successo!")
+                    //$('#not-found-section').hide()
+                    //this.checkSession() // Aggiorna l'interfaccia
+                    //$("#not-found-section").hide(); 
+                } else {
+                    alert("Errore!")
+                    //$('#not-found-section').show()
+                }
+            }.bind(this),
+            error: function (response) {
+                console.log(response);
+            }
+        });
     }
 
     checkSession() {

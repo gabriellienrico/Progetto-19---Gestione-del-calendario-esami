@@ -9,12 +9,22 @@ CREATE TABLE corsi (
     anno_corso INT NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Tabella professori
-CREATE TABLE professori (
+-- -- Tabella professori
+-- CREATE TABLE professori (
+--     id INT AUTO_INCREMENT PRIMARY KEY,
+--     nome VARCHAR(100) NOT NULL,
+--     cognome VARCHAR(100) NOT NULL,
+--     email VARCHAR(255) UNIQUE NOT NULL
+-- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- Tabella utenti
+CREATE TABLE utenti (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
     cognome VARCHAR(100) NOT NULL,
-    email VARCHAR(255) UNIQUE NOT NULL
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    ruolo ENUM('admin', 'student', 'prof') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Tabella appelli
@@ -26,19 +36,13 @@ CREATE TABLE appelli (
     opz_2 JSON NOT NULL,
     opz_agg JSON NOT NULL,
     FOREIGN KEY (corso) REFERENCES corsi(id) ON DELETE CASCADE,
-    FOREIGN KEY (professore) REFERENCES professori(id) ON DELETE CASCADE,
+    FOREIGN KEY (professore) REFERENCES utenti(id) ON DELETE CASCADE,
     CHECK (
         JSON_VALID(opz_1) AND JSON_VALID(opz_2) AND JSON_VALID(opz_agg) -- Verifica che siano JSON validi
     )
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Tabella utenti
-CREATE TABLE utenti (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    email VARCHAR(255) UNIQUE NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    ruolo ENUM('admin', 'user') NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 
 
 -- Inserimento corsi
@@ -64,23 +68,24 @@ INSERT INTO corsi (nome_corso, anno_corso) VALUES
 ('Programmazione Parallela e HPC', 3);
 
 -- Inserimento professori
-INSERT INTO professori (nome, cognome, email) VALUES
-('Gianfranco', 'Rossi', 'gianfranco.rossi@unipr.it'),
-('Alessandro', 'Zaccagnini', 'alessandro.zaccagnini@unipr.it'),
-('Giuseppe', 'Cota', 'giuseppe.cota@unipr.it'),
-('Alessandro', 'Dal Palù', 'alessandro.dalpalu@unipr.it'),
-('Anna', 'Benini', 'anna.benini@unipr.it'),
-('Federico', 'Bergenti', 'federico.bergenti@unipr.it'),
-('Roberto', 'De Pietri', 'roberto.depietri@unipr.it'),
-('Francesco', 'Morandin', 'francesco.morandin@unipr.it'),
-('Enea', 'Zaffanella', 'enea.zaffanella@unipr.it'),
-('Giulio', 'Destri', 'giulio.destri@unipr.it'),
-('Flavio', 'Bertini', 'flavio.bertini@unipr.it'),
-('Chiara', 'Guardasoni', 'chiara.guardasoni@unipr.it'),
-('Roberto', 'Bagnara', 'roberto.bagnara@unipr.it'),
-('Roberto', 'Alfieri', 'roberto.alfieri@unipr.it'),
-('Armando', 'Sternieri', 'armando.sternieri@unipr.it'),
-('Vincenzo', 'Bonnici', 'vincenzo.bonnici@unipr.it');
+INSERT INTO utenti (nome, cognome, email, password, ruolo) VALUES
+('Gianfranco', 'Rossi', 'gianfranco.rossi@unipr.it', '$2a$12$J1br/BtKoEMbyP14ZXBDXeK3HF6Fdm0dO9dvvgVfY5/qtMeMQ09Yu', 'prof'),
+('Alessandro', 'Zaccagnini', 'alessandro.zaccagnini@unipr.it', '$2a$12$J1br/BtKoEMbyP14ZXBDXeK3HF6Fdm0dO9dvvgVfY5/qtMeMQ09Yu', 'prof'),
+('Giuseppe', 'Cota', 'giuseppe.cota@unipr.it', '$2a$12$J1br/BtKoEMbyP14ZXBDXeK3HF6Fdm0dO9dvvgVfY5/qtMeMQ09Yu', 'prof'),
+('Alessandro', 'Dal Palù', 'alessandro.dalpalu@unipr.it', '$2a$12$J1br/BtKoEMbyP14ZXBDXeK3HF6Fdm0dO9dvvgVfY5/qtMeMQ09Yu', 'prof'),
+('Anna', 'Benini', 'anna.benini@unipr.it', '$2a$12$J1br/BtKoEMbyP14ZXBDXeK3HF6Fdm0dO9dvvgVfY5/qtMeMQ09Yu', 'prof'),
+('Federico', 'Bergenti', 'federico.bergenti@unipr.it', '$2a$12$J1br/BtKoEMbyP14ZXBDXeK3HF6Fdm0dO9dvvgVfY5/qtMeMQ09Yu', 'prof'),
+('Roberto', 'De Pietri', 'roberto.depietri@unipr.it', '$2a$12$J1br/BtKoEMbyP14ZXBDXeK3HF6Fdm0dO9dvvgVfY5/qtMeMQ09Yu', 'prof'),
+('Francesco', 'Morandin', 'francesco.morandin@unipr.it', '$2a$12$J1br/BtKoEMbyP14ZXBDXeK3HF6Fdm0dO9dvvgVfY5/qtMeMQ09Yu', 'prof'),
+('Enea', 'Zaffanella', 'enea.zaffanella@unipr.it', '$2a$12$J1br/BtKoEMbyP14ZXBDXeK3HF6Fdm0dO9dvvgVfY5/qtMeMQ09Yu', 'prof'),
+('Giulio', 'Destri', 'giulio.destri@unipr.it', '$2a$12$J1br/BtKoEMbyP14ZXBDXeK3HF6Fdm0dO9dvvgVfY5/qtMeMQ09Yu', 'prof'),
+('Flavio', 'Bertini', 'flavio.bertini@unipr.it', '$2a$12$J1br/BtKoEMbyP14ZXBDXeK3HF6Fdm0dO9dvvgVfY5/qtMeMQ09Yu', 'prof'),
+('Chiara', 'Guardasoni', 'chiara.guardasoni@unipr.it', '$2a$12$J1br/BtKoEMbyP14ZXBDXeK3HF6Fdm0dO9dvvgVfY5/qtMeMQ09Yu', 'prof'),
+('Roberto', 'Bagnara', 'roberto.bagnara@unipr.it', '$2a$12$J1br/BtKoEMbyP14ZXBDXeK3HF6Fdm0dO9dvvgVfY5/qtMeMQ09Yu', 'prof'),
+('Roberto', 'Alfieri', 'roberto.alfieri@unipr.it', '$2a$12$J1br/BtKoEMbyP14ZXBDXeK3HF6Fdm0dO9dvvgVfY5/qtMeMQ09Yu', 'prof'),
+('Armando', 'Sternieri', 'armando.sternieri@unipr.it', '$2a$12$J1br/BtKoEMbyP14ZXBDXeK3HF6Fdm0dO9dvvgVfY5/qtMeMQ09Yu', 'prof'),
+('Vincenzo', 'Bonnici', 'vincenzo.bonnici@unipr.it', '$2a$12$J1br/BtKoEMbyP14ZXBDXeK3HF6Fdm0dO9dvvgVfY5/qtMeMQ09Yu', 'prof'),
+('Nome', 'Cognome', 'admin@example.com', '$2a$12$k.ukq87uM7B4keBt8T.4JuoR/V9QDxK5wqd2g0BRRpcv5zNwRbjsm', 'admin');
 
 -- Inserimento appelli
 INSERT INTO appelli (corso, professore, opz_1, opz_2, opz_agg) VALUES
@@ -428,8 +433,8 @@ INSERT INTO appelli (corso, professore, opz_1, opz_2, opz_agg) VALUES
 );
 
 -- Inserimento utenti
-INSERT INTO utenti (email, password, ruolo) VALUES
-('admin@example.com', '$2a$12$fHtPHFhRqw./KF5BjVq0Ru2s.V3ShWfZXocwUpmBsBZnPb50Ju.Hm', 'admin');
+-- INSERT INTO utenti (email, password, ruolo) VALUES
+-- ('admin@example.com', '$2a$12$fHtPHFhRqw./KF5BjVq0Ru2s.V3ShWfZXocwUpmBsBZnPb50Ju.Hm', 'admin');
 
 
 COMMIT;
